@@ -45,4 +45,17 @@ export class PaymentController extends Controller {
       });
     }
   }
+
+
+  async notify(req: Request, res: Response): Promise<void> {
+    let code = Code.FAIL;
+    let data = null;
+    
+    res.setHeader("Content-Type", "application/json");
+
+    res.send({
+      code,
+      data,
+    });
+  }
 }
