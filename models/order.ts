@@ -22,9 +22,9 @@ export interface IOrder{
     cost: number;
     tax: number;
 
-    pickupDateTime: string;
-    createDateTime: string;
-    modifyDateTime: string;
+    pickupUTC: string;
+    createUTC: string;
+    modifyUTC: string;
 }
 
 export class Order extends Model {

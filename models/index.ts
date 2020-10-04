@@ -1,10 +1,12 @@
 
 import { DataBase } from "../dbs";
+import {cfg} from "../config"
 
 export class Model {
   db: DataBase;
   tableName: string;
   definition: any;
+  mongooseModel: any;
 
   /**
    * 
@@ -16,6 +18,11 @@ export class Model {
     this.db = db;
     this.tableName = tableName;
     this.definition = definition; // optional
+
+    if(cfg.DB_LAYER === 'mongoose'){
+      this.mongooseModel = this.db.getModel(tableName, definition);
+    }else{
+    }
   }
 
   /**
@@ -24,7 +31,11 @@ export class Model {
    * @param options 
    */
   async find(query: any, options?: any) {
-    return await this.db.find(this.tableName, query, options);
+    if(cfg.DB_LAYER === 'mongoose'){
+      return await this.db.find(this.mongooseModel, this.tableName, query);
+    }else{
+      return await this.db.find(this.tableName, query, options);
+    }
   }
 
   /**
@@ -33,7 +44,11 @@ export class Model {
    * @param options 
    */
   async findOne(query: any, options?: any) {
-    return await this.db.findOne(this.tableName, query, options);
+    if(cfg.DB_LAYER === 'mongoose'){
+      return await this.db.findOne(this.mongooseModel, this.tableName, query);
+    }else{
+      return await this.db.findOne(this.tableName, query, options);
+    }
   }
 
 

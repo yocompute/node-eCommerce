@@ -25,6 +25,21 @@ export class Controller {
   }
 
   /**
+   * 
+   * @param req 
+   */
+  getAuthToken(req: Request){
+    const s: any = req.get("Authorization");
+    if (!s) {
+      return null;
+    }else if(s.indexOf('Bearer') !== -1){
+      return s.slice(7); // to remove 'Bear '
+    }else{
+      return s;
+    }
+  }
+
+  /**
   * 
   * @param req 
   * @param res 
