@@ -2,7 +2,7 @@ import axios from "axios"
 import { Model } from "..";
 import { DataBase } from "../../dbs";
 import { IOrderItem } from "../order";
-import { moneris, MonerisPayment } from "./moneris";
+import { MonerisPayment } from "./moneris";
 
 export const PaymentStatus = {
     PAID: 'Paid',
@@ -80,22 +80,22 @@ export class Payment extends Model {
     return description;
   }
 
-  getPayable(payment: IPayment, account: IUser) {
+  getPayable(payment: IPayment, balance: number) {
       let total = payment.price + payment.tax;
-    if (account.balance) {
-      total -= Number(account.balance);
+    if (balance) {
+      total -= Number(balance);
     }
     return total;
   }
 
-  async pay(userId: string, userName: string, payment: IPayment, card?: ICard){
+  async pay(userId: string, userName: string, payment: IPayment, card: ICard){
       if(payment.method === PaymentMethod.CARD){
         const moneris = new MonerisPayment();
         const paymentId: any = payment._id;
         if(process.env.MOCK){ // for test 
           return await axios.post('http://localhost/api/payments/notify/moneris', {code: 'success'});
         }else{
-          return await moneris.pay(userId, userName, payment.payable, paymentId.toString(), card?.cc, card?.cvd, card?.exp);
+          return await moneris.pay(userId, userName, payment.payable, paymentId.toString(), card);
         }
       }
   }

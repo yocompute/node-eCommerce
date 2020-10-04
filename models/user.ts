@@ -61,7 +61,8 @@ export interface IUser {
   async getUserByToken(tokenId: string) {
     if (tokenId && tokenId !== "undefined" && tokenId !== "null") {
       try {
-        const r: any = jwt.verify(tokenId, process.env.JWT_SECRET);
+        const JWT_SECRET: any = process.env.JWT_SECRET;
+        const r: any = jwt.verify(tokenId, JWT_SECRET);
         if (r.userId) {
           const user = await this.findOne({ _id: r.userId });
           if (user && user.password) {

@@ -111,13 +111,13 @@ export class PaymentController extends Controller {
     // await Log.save({ msg: `Snappay notify req --- paymentId: ${paymentId}, ${JSON.stringify(req.body)}` });
 
     if (rsp && rsp.trans_status === "SUCCESS") {
-      const paymentActionCode = this.snappay.getTransactionActionCode(paymentMethod); // TransactionAction.PAY_BY_WECHAT.code;
-      console.log(`before process pay`);
-      this.orderModel.processAfterPay(paymentId, paymentActionCode, amount, '').then(() => {
-        console.log('after process pay');
-        res.setHeader("Content-Type", "application/json");
-        res.send({ code: "0" }); // must return as snappay gateway required
-      });
+      // const paymentActionCode = this.snappay.getTransactionActionCode(paymentMethod); // TransactionAction.PAY_BY_WECHAT.code;
+      // console.log(`before process pay`);
+      // this.orderModel.processAfterPay(paymentId, paymentActionCode, amount, '').then(() => {
+      //   console.log('after process pay');
+      //   res.setHeader("Content-Type", "application/json");
+      //   res.send({ code: "0" }); // must return as snappay gateway required
+      // });
     }
   }
 }

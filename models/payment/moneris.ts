@@ -3,7 +3,7 @@
 // import { IOrder, Order, OrderStatus, PaymentMethod, PaymentStatus } from "../order";
 import { ICard, Payment } from "./index";
 // import { DB } from "../../db";
-// import MonerisHt from 'moneris-node';
+import MonerisHt from 'moneris-node';
 // import MonerisCheckout from "moneris-checkout";
 // import { EnvironmentType, BooleanType } from "moneris-checkout/dist/types/global";
 // import { Config } from "../../config";
@@ -17,19 +17,19 @@ const fe = function (arr: any, assertion: any = false) {
     return Array.isArray(arr) && arr.length > 0 && arr[0] ? (assertion ? arr[0] === assertion : arr[0]) : null;
 }
 
-const cfg = new Config();
+// const cfg = new Config();
 
-export const moneris = new MonerisCheckout(
-    cfg.MONERIS.STORE_ID,
-    cfg.MONERIS.API_TOKEN,
-    cfg.MONERIS.CHECKOUT_ID,
-    <EnvironmentType>cfg.MONERIS.ENVIRONMENT
-);
+// export const moneris = new MonerisCheckout(
+//     cfg.MONERIS.STORE_ID,
+//     cfg.MONERIS.API_TOKEN,
+//     cfg.MONERIS.CHECKOUT_ID,
+//     <EnvironmentType>cfg.MONERIS.ENVIRONMENT
+// );
 
 export const monerisHt = new MonerisHt({
     app_name: 'Duocun Inc',
-    store_id: cfg.MONERIS.STORE_ID,
-    api_token: cfg.MONERIS.API_TOKEN,
+    store_id: process.env.MONERIS_STORE_ID,
+    api_token: process.env.MONERIS_API_TOKEN,
     test: false
 });
 
@@ -41,10 +41,10 @@ export class MonerisPayment {
         // this.userModel = new User(db);
     }
 
-    async pay(userId: string, userName: string, amount: number, paymentId: string, card?: ICard) {
-        const cc = card?.cc;
-        const cvd = card?.cvd;
-        const exp = card?.exp;
+    async pay(userId: string, userName: string, amount: number, paymentId: string, card: ICard) {
+        let cc: any = card.cc;
+        let cvd: any = card.cvd;
+        let exp: any = card.exp;
         // const user: IUser = await this.userModel.getUserByToken(tokenId);
         // if (!user) {
         //     return {
@@ -67,19 +67,19 @@ export class MonerisPayment {
 
         if (!cc) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 message: 'credit_card_empty'
             };
         }
         if (!cvd) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 message: 'cvd_empty'
             };
         }
         if (!exp) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 message: 'exp_empty'
             };
         }
@@ -90,19 +90,19 @@ export class MonerisPayment {
 
         if (!/^\d{12,20}$/.test(cc)) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 msg: 'invalid_card_number'
             };
         }
         if (!/^\d{4}$/.test(exp)) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 msg: 'invalid_exp'
             };
         }
         if (!/^\d{3}$/.test(cvd)) {
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 msg: 'invalid_cvd'
             };
         }
@@ -125,7 +125,7 @@ export class MonerisPayment {
             resp = await monerisHt.send({
                 type: 'purchase',
                 crypt_type: 7,
-                order_id: paymentId + "_" + moment().tz("America/Toronto").format("MMDDHHmmss"),
+                order_id: paymentId, //  + "_" + moment().tz("America/Toronto").format("MMDDHHmmss"),
                 amount: Number(amount).toFixed(2),
                 pan: cc,
                 expdate: this.convertMMYYtoYYMM(exp),
@@ -143,7 +143,7 @@ export class MonerisPayment {
             //   logger.error('Moneris pay error: ' + e);
             //   logger.info("--- END MONERIS HT PAY ---");
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 msg: 'payment_failed'
             };
         }
@@ -171,7 +171,7 @@ export class MonerisPayment {
             //   logger.info('Not approved');
             //   logger.info("--- END MONERIS HT PAY ---");
             return {
-                code: Code.FAIL,
+                // code: Code.FAIL,
                 msg: this.getMonerisErrorMessage(status.code),
                 mcode: {
                     iso: status.iso,
@@ -180,8 +180,8 @@ export class MonerisPayment {
             };
         } else{
             return {
-                code: Code.SUCCESS,
-                err: PaymentError.NONE
+                // code: Code.SUCCESS,
+                // err: PaymentError.NONE
             };
         }
 
