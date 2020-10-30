@@ -1,10 +1,9 @@
 import express from 'express';
 
-import { DataBase } from "../dbs";
 // import {LogController} from '../controllers/log';
 
 
-export function LogRoute(db: DataBase) {
+export function LogRoute(connection: any) {
     const router = express.Router();
     // const controller = new LogController({db, sse: undefined});
     // router.post('/', (req, res) => { controller.insertOne(req, res); });

@@ -1,6 +1,6 @@
 export const cfg = {
     SVC_PATH: '/api',
-    SVC_PORT: 8005,
+    SVC_PORT: 8006,
     
 
     DB_LAYER: 'mongoose',
