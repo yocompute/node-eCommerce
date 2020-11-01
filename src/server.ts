@@ -33,13 +33,14 @@ app.use(bodyParser.json({ limit: "1mb" }));
 const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
-
+const DB_AUTH_SOURCE = process.env.DB_AUTH_SOURCE;
 createConnection({
     type: "mongodb",
     username: DB_USERNAME,
     password: DB_PASSWORD,
     database: DB_NAME,
-    // authSource: "shippal",
+    authSource: DB_AUTH_SOURCE,
+    useUnifiedTopology: true,
     poolSize: 5,
     entities: [
         __dirname + "/*/*.entity.js"
