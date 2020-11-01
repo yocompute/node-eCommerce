@@ -1,5 +1,5 @@
 export const cfg = {
-    SVC_PATH: '/api',
+    SVC_PATH: '/v1',
     SVC_PORT: 8006,
     
 
