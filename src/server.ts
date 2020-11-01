@@ -30,12 +30,15 @@ app.use(bodyParser.json({ limit: "1mb" }));
 
 // the url for the EventSource
 // app.get('/events', sse.init);
+const DB_USERNAME = process.env.DB_USERNAME;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_NAME = process.env.DB_NAME;
 
 createConnection({
     type: "mongodb",
-    username: "shippal",
-    password: "sp20209!",
-    database: "shippal",
+    username: DB_USERNAME,
+    password: DB_PASSWORD,
+    database: DB_NAME,
     // authSource: "shippal",
     poolSize: 5,
     entities: [
