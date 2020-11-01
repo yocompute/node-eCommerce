@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-import { PaymentController } from "../controllers/payment";
 import { parseQuery } from "../middlewares/parse-query";
 
 export function PaymentRoute(connection: any, sse: any){
