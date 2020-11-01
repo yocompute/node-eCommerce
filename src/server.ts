@@ -22,7 +22,7 @@ dotenv.config();
 const app = express();
 // const sse = new SSE();
 
-const SVC_PATH = cfg.SVC_PATH;
+const SVC_PATH = process.env.ENV === "local" ? cfg.SVC_PATH : "";
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false, limit: "1mb" }));
