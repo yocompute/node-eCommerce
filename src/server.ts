@@ -14,6 +14,7 @@ import { cfg } from './config';
 import "reflect-metadata";
 import { Connection, createConnection } from "typeorm";
 
+import { AuthRoute } from './auth/auth.route';
 import { UserRoute } from './user/user.route';
 import { ProductRoute } from './routes/product';
 
@@ -46,6 +47,7 @@ createConnection({
         __dirname + "/*/*.entity.js"
     ],
 }).then((connection: Connection) => {
+    app.use(SVC_PATH + "/auth", AuthRoute(connection));
     app.use(SVC_PATH + "/users", UserRoute(connection));
     app.use(SVC_PATH + "/products", ProductRoute(connection));
     // console.log("Inserting a new user into the database...");

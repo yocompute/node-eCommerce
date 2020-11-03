@@ -1,16 +1,13 @@
 import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
 
-@Entity({name: "users"})
-export class User {
+@Entity({name: "auth"})
+export class Auth {
 
     @ObjectIdColumn()
     _id: ObjectID | undefined;
 
     @Column()
-    username: string;
-
-    // @Column()
-    // password: string | undefined;
+    userId: ObjectID | undefined;
 
     @Column()
     email: string | undefined;
@@ -19,7 +16,7 @@ export class User {
     phone: string | undefined;
 
     @Column()
-    balance: number;
+    password: string | undefined;
 
     @Column()
     createUTC: Date;

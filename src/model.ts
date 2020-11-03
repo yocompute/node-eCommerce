@@ -49,11 +49,6 @@ export class Model {
   }
 
 
-  /**
-  * 
-  * @param req 
-  * @param res 
-  */
   async save(entity: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
@@ -68,11 +63,6 @@ export class Model {
     }
   }
 
-  /**
-  * 
-  * @param req 
-  * @param res 
-  */
   async update(query: FindConditions<string>, updates: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
