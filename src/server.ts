@@ -16,7 +16,8 @@ import { Connection, createConnection } from "typeorm";
 
 import { AuthRoute } from './auth/auth.route';
 import { UserRoute } from './user/user.route';
-import { ProductRoute } from './routes/product';
+import { BrandRoute } from './brand/brand.route';
+import { ProductRoute } from './product/product.route';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ createConnection({
 }).then((connection: Connection) => {
     app.use(SVC_PATH + "/auth", AuthRoute(connection));
     app.use(SVC_PATH + "/users", UserRoute(connection));
+    app.use(SVC_PATH + "/brands", BrandRoute(connection));
     app.use(SVC_PATH + "/products", ProductRoute(connection));
     // console.log("Inserting a new user into the database...");
     // const user = new User();
