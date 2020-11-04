@@ -108,4 +108,12 @@ dist
 .env.development
 .env.production
 
-build
+build/
+package-lock.json
+
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
