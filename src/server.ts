@@ -14,9 +14,10 @@ import { cfg } from "./config";
 import "reflect-metadata";
 import { Connection, createConnection } from "typeorm";
 
-import { AuthRoute } from "./auth/auth.route";
-import { UserRoute } from "./user/user.route";
-import { ProductRoute } from "./routes/product";
+import { AuthRoute } from './auth/auth.route';
+import { UserRoute } from './user/user.route';
+import { BrandRoute } from './brand/brand.route';
+import { ProductRoute } from './product/product.route';
 
 dotenv.config();
 
