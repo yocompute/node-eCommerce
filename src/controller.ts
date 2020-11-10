@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import SSE from "express-sse-ts";
-import { Connection, Repository, EntityTarget, FindManyOptions } from "typeorm";
+// import { Connection, Repository, EntityTarget, FindManyOptions } from "typeorm";
+import { Model } from './model';
 
 export const Code = {
     SUCCESS: 'success',
@@ -8,13 +9,13 @@ export const Code = {
 }
 
 export interface IControllerParams {
-    connection: Connection,
+    // connection: Connection,
     sse?: SSE
 }
 
 
 export class Controller {
-    public model: any;
+    public model: Model;
 
     constructor(model: any) {
         this.model = model;
@@ -41,7 +42,9 @@ export class Controller {
     * @param res 
     */
     async find(req: Request, res: Response): Promise<void> {
-        const query: FindManyOptions = req.query;
+        const query: any = req.query;
+
+        // mongoose
         const r = await this.model.find(query);
 
         res.setHeader('Content-Type', 'application/json');
@@ -49,7 +52,7 @@ export class Controller {
     }
 
     async insertOne(req: Request, res: Response): Promise<void> {
-        const d = req.body.data;
+        const d = req.body;
         let code = Code.FAIL;
         let data = '';
         res.setHeader("Content-Type", "application/json");

@@ -3,9 +3,9 @@ import { parseQuery } from "../middlewares/parse-query";
 import { AuthController } from "./auth.controller";
 import { AuthModel } from "./auth.model";
 
-export function AuthRoute(connection: any){
+export function AuthRoute(){
   const router = express.Router();
-  const model = new AuthModel({connection, sse: undefined});
+  const model = new AuthModel({});
   const controller = new AuthController(model);
   
   router.post('/login', (req:Request, res:Response) => { controller.login(req, res); });

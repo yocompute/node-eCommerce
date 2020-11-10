@@ -1,6 +1,6 @@
 
 import SSE from "express-sse-ts";
-import { Connection, Repository, EntityTarget, FindManyOptions, FindConditions } from "typeorm";
+// import { Connection, Repository, EntityTarget, FindManyOptions, FindConditions } from "typeorm";
 
 export const Code = {
   SUCCESS: 'success',
@@ -8,7 +8,7 @@ export const Code = {
 }
 
 export interface IModelParams{
-  connection: Connection,
+  // connection: Connection,
   sse?: SSE
 }
 
@@ -19,56 +19,80 @@ export interface IModelResult{
 }
 
 export class Model {
-  public connection: Connection;
+  // public connection: Connection;
   public sse?: SSE;
-  public entity: any;
+  public entityClass: any;
 
-  constructor(entity: any, params: IModelParams) {
-    this.connection = params.connection;
+  constructor(entityClass: any, params: IModelParams) {
+    // this.connection = params.connection;
     this.sse = params.sse;
-    this.entity = entity;
+    this.entityClass = entityClass;
   }
 
-  /**
-  * 
-  * @param req 
-  * @param res 
-  */
-  async find(query: FindManyOptions): Promise<IModelResult> {
+  async find(query: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
     try {
-      const repo = this.connection.getRepository(this.entity);
-      const r = await repo.find(query);
+      // typeorm
+      // const repo = this.connection.getRepository(this.entity);
+      // const r = await repo.find(query);
+
+      // mongoose
+      const rs = await this.entityClass.find(query);
       code = Code.SUCCESS;
-      data = r;
+      data = rs;
       return { code, data, error: '' };
     } catch (error) {
       return { code, data, error };
     }
   }
 
+  async findOne(query: any): Promise<IModelResult> {
+    let data: any = [];
+    let code = Code.FAIL;
+    try {
+      // typeorm
+      // const repo = this.connection.getRepository(this.entity);
+      // const r = await repo.findOne(query);
+
+      // mongoose
+      const {_doc} = await this.entityClass.findOne(query);
+      code = Code.SUCCESS;
+      data = _doc;
+      return { code, data, error: '' };
+    } catch (error) {
+      return { code, data, error };
+    }
+  }
 
   async save(entity: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
     try {
-      const repo = this.connection.getRepository(this.entity);
-      const r = await repo.save(entity);
+      // typeorm
+      // const repo = this.connection.getRepository(this.entity);
+      // const r = await repo.save(entity);
+
+      // mongoose
+      const { _doc } = await this.entityClass.create(entity);
       code = Code.SUCCESS;
-      data = r;
+      data = _doc;
       return { code, data, error: '' };
     } catch (error) {
       return { code, data, error };
     }
   }
 
-  async update(query: FindConditions<string>, updates: any): Promise<IModelResult> {
+  async update(query: any, updates: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
     try {
-      const repo = this.connection.getRepository(this.entity);
-      const r = await repo.update(query, updates);
+      // typeorm
+      // const repo = this.connection.getRepository(this.entity);
+      // const r = await repo.update(query, updates);
+      
+      // mongoose
+      const r = await this.entityClass.update(query, updates);
       code = Code.SUCCESS;
       data = r;
       return { code, data, error: '' };

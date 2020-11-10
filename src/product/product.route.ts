@@ -3,9 +3,9 @@ import { parseQuery } from "../middlewares/parse-query";
 import { ProductController } from "./product.controller";
 import { ProductModel } from "./product.model";
 
-export function ProductRoute(connection: any){
+export function ProductRoute(){
   const router = express.Router();
-  const model = new ProductModel({connection, sse: undefined});
+  const model = new ProductModel({});
   const controller = new ProductController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });

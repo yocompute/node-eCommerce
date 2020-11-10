@@ -1,23 +1,38 @@
-import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
+import mongoose from '../db';
 
-@Entity({name: "brands"})
-export class Brand {
+const { Schema, Types } = mongoose;
 
-    @ObjectIdColumn()
-    _id: ObjectID | undefined;
+const BrandSchema = new Schema({
+    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    name: String,
+    description: String,
+    imageUrl: String,
+    ownerId: Types.ObjectId,
+    creatUTC: {Date, default: new Date()},
+})
 
-    @Column()
-    name: string;
+export const Brand = mongoose.model('Brand', BrandSchema, 'brands');
 
-    @Column()
-    description: string | undefined;
+// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
+
+// @Entity({name: "brands"})
+// export class Brand {
+
+//     @ObjectIdColumn()
+//     _id: ObjectID | undefined;
+
+//     @Column()
+//     name: string;
+
+//     @Column()
+//     description: string | undefined;
     
-    @Column()
-    imageUrl: string | undefined;
+//     @Column()
+//     imageUrl: string | undefined;
 
-    @Column()
-    createUTC: Date;
+//     @Column()
+//     createUTC: Date;
 
-    @Column()
-    updateUTC: Date;
-}
+//     @Column()
+//     updateUTC: Date;
+// }
