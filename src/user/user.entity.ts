@@ -1,26 +1,41 @@
-import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
+import mongoose from '../db';
 
-@Entity({name: "users"})
-export class User {
+const { Schema, Types } = mongoose;
 
-    @ObjectIdColumn()
-    _id: ObjectID | undefined;
+const UserSchema = new Schema({
+    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    username: String,
+    email: String,
+    phone: String,
+    balance: {Number, default: 0},
+    creatUTC: {Date, default: new Date()},
+})
 
-    @Column()
-    username: string;
+export const User = mongoose.model('User', UserSchema, 'users');
 
-    // @Column()
-    // password: string | undefined;
+// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
 
-    @Column()
-    email: string | undefined;
+// @Entity({name: "users"})
+// export class User {
+
+//     @ObjectIdColumn()
+//     _id: ObjectID | undefined;
+
+//     @Column()
+//     username: string;
+
+//     // @Column()
+//     // password: string | undefined;
+
+//     @Column()
+//     email: string | undefined;
     
-    @Column()
-    phone: string | undefined;
+//     @Column()
+//     phone: string | undefined;
 
-    @Column()
-    balance: number;
+//     @Column()
+//     balance: number;
 
-    @Column()
-    createUTC: Date;
-}
+//     @Column()
+//     createUTC: Date;
+// }

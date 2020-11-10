@@ -1,13 +1,15 @@
 
 
 import {Request, Response} from "express";
-import { Controller } from "../controller";
-import { Code } from "../controllers";
+import { Controller, Code } from "../controller";
 import { AuthModel } from "./auth.model";
 
 export class AuthController extends Controller {
+    authModel: any;
+
     constructor(model: AuthModel) {
         super(model);
+        this.authModel = model;
     }
 
     async login(req: Request, res: Response): Promise<void> {
@@ -16,7 +18,7 @@ export class AuthController extends Controller {
         let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.model.login(d);
+            const r = await this.authModel.login(d);
             res.send(r);
         } else {
             res.send({
@@ -33,7 +35,7 @@ export class AuthController extends Controller {
         let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.model.signup(d);
+            const r = await this.authModel.signup(d);
             res.send(r);
         } else {
             res.send({

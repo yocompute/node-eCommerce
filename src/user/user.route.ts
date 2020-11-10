@@ -3,9 +3,9 @@ import { parseQuery } from "../middlewares/parse-query";
 import { UserController } from "./user.controller";
 import { UserModel } from "./user.model";
 
-export function UserRoute(connection: any){
+export function UserRoute(){
   const router = express.Router();
-  const model = new UserModel({connection, sse: undefined});
+  const model = new UserModel({});
   const controller = new UserController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });

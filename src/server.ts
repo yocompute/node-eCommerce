@@ -13,7 +13,10 @@ import { cfg } from "./config";
 
 import "reflect-metadata";
 
-import db_connection from "./db";
+import { AuthRoute } from "./auth/auth.route";
+import { UserRoute } from "./user/user.route";
+import { BrandRoute } from "./brand/brand.route";
+import { ProductRoute } from "./product/product.route";
 
 dotenv.config();
 
@@ -29,7 +32,10 @@ app.use(bodyParser.json({ limit: "1mb" }));
 // the url for the EventSource
 // app.get('/events', sse.init);
 
-db_connection()
+app.use(SVC_PATH + "/auth", AuthRoute());
+app.use(SVC_PATH + "/users", UserRoute());
+app.use(SVC_PATH + "/brands", BrandRoute());
+app.use(SVC_PATH + "/products", ProductRoute());
 
 
 app.listen(cfg.SVC_PORT, () => {
