@@ -29,7 +29,6 @@ app.use(bodyParser.json({ limit: "1mb" }));
 // the url for the EventSource
 // app.get('/events', sse.init);
 
-
 db_connection()
 
 
