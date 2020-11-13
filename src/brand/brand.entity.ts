@@ -8,7 +8,7 @@ const BrandSchema = new Schema({
     description: String,
     imageUrl: String,
     ownerId: Types.ObjectId,
-    creatUTC: {Date, default: new Date()},
+    creatUTC: Date,
 })
 
 export const Brand = mongoose.model('Brand', BrandSchema, 'brands');

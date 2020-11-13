@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     email: String,
     phone: String,
     balance: {Number, default: 0},
-    creatUTC: {Date, default: new Date()},
+    creatUTC: Date,
 })
 
 export const User = mongoose.model('User', UserSchema, 'users');

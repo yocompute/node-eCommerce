@@ -8,7 +8,7 @@ const AuthSchema = new Schema({
     password: String,
     phone: String,
     userId: Types.ObjectId,
-    creatUTC: {Date, default: new Date()},
+    creatUTC: Date,
 })
 
 export const Auth = mongoose.model('Auth', AuthSchema, 'auth');
