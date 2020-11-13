@@ -11,8 +11,8 @@ const ProductSchema = new Schema({
     taxRate: Number,
     imageUrl: String,
     userId: Types.ObjectId,
-    creatUTC: {Date, default: new Date()},
-    updateUTC: {Date, default: new Date()},
+    creatUTC: Date,
+    updateUTC: Date,
 })
 
 export const Product = mongoose.model('Product', ProductSchema, 'products');
