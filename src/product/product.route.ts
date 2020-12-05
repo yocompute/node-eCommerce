@@ -5,7 +5,7 @@ import { ProductModel } from "./product.model";
 
 export function ProductRoute(){
   const router = express.Router();
-  const model = new ProductModel({});
+  const model: ProductModel = new ProductModel({});
   const controller = new ProductController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });
