@@ -3,9 +3,9 @@ import { parseQuery } from "../middlewares/parse-query";
 import { BrandController } from "./brand.controller";
 import { BrandModel } from "./brand.model";
 
-export function BrandRoute(connection: any){
+export function BrandRoute(){
   const router = express.Router();
-  const model = new BrandModel({connection, sse: undefined});
+  const model = new BrandModel({});
   const controller = new BrandController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });

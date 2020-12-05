@@ -1,22 +1,40 @@
 
 
 import {Request, Response} from "express";
-import { Controller } from "../controller";
-import { Code } from "../controllers";
+import { Controller, Code } from "../controller";
 import { AuthModel } from "./auth.model";
 
 export class AuthController extends Controller {
+    authModel: AuthModel;
+
     constructor(model: AuthModel) {
         super(model);
+        this.authModel = model;
     }
 
+    async getUserByTokenId(req: Request, res: Response): Promise<any> {
+        const tokenId = req.params.tokenId;
+        let code = Code.FAIL;
+        let data = '';
+        res.setHeader("Content-Type", "application/json");
+        if (tokenId) {
+            const r = await this.authModel.getUserByTokenId(tokenId);
+            res.send(r);
+        } else {
+            res.send({
+                code,
+                data,
+                error: 'no field to update'
+            })
+        }
+    }
     async login(req: Request, res: Response): Promise<void> {
         const d = req.body;
         let code = Code.FAIL;
         let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.model.login(d);
+            const r = await this.authModel.login(d);
             res.send(r);
         } else {
             res.send({
@@ -33,7 +51,7 @@ export class AuthController extends Controller {
         let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.model.signup(d);
+            const r = await this.authModel.signup(d);
             res.send(r);
         } else {
             res.send({
