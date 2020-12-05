@@ -3,15 +3,16 @@ import mongoose from '../db';
 const { Schema, Types } = mongoose;
 
 const ProductSchema = new Schema({
-    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
     price: Number,
     cost: Number,
     taxRate: Number,
     imageUrl: String,
-    userId: Types.ObjectId,
-    creatUTC: Date,
+    status: String,
+    brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+    createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
 

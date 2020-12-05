@@ -18,6 +18,27 @@ export class AuthModel extends Model {
         this.userModel = new Model(User, {});
     }
 
+    async getUserByTokenId(tokenId: string): Promise<IModelResult> {
+        let code = Code.FAIL;
+        let error = '';
+        const JWT_SECRET: any = process.env.JWT_SECRET;
+        try {
+            const _id = jwt.verify(tokenId, JWT_SECRET);
+            if (_id) {
+                const {data} = await this.findOne({ _id });
+                if (data) {
+                    delete data.password;
+                }
+                code = Code.SUCCESS;
+                return { code, data, error };
+            } else {
+                return { code, data: null, error: 'Authentication Fail' };
+            }
+        } catch (error) {
+            return { code, data: null, error: 'Authentication Exception: ${error}' };
+        }
+    }
+
     async login(credential: any): Promise<IModelResult> {
         let code = Code.FAIL;
         let tokenId = null;

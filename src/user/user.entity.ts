@@ -3,12 +3,13 @@ import mongoose from '../db';
 const { Schema, Types } = mongoose;
 
 const UserSchema = new Schema({
-    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     username: String,
     email: String,
     phone: String,
     balance: {Number, default: 0},
-    creatUTC: Date,
+    createUTC: {type: Date, default: new Date()},
+    updateUTC: Date,
 })
 
 export const User = mongoose.model('User', UserSchema, 'users');

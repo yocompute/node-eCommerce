@@ -3,12 +3,14 @@ import mongoose from '../db';
 const { Schema, Types } = mongoose;
 
 const BrandSchema = new Schema({
-    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
-    imageUrl: String,
-    ownerId: Types.ObjectId,
-    creatUTC: Date,
+    logoUrl: String,
+    status: String,
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    createUTC: {type: Date, default: new Date()},
+    updateUTC: Date,
 })
 
 export const Brand = mongoose.model('Brand', BrandSchema, 'brands');
