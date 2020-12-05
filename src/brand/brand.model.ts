@@ -18,6 +18,9 @@ export class BrandModel extends Model {
       // const r = await repo.find(query);
 
       // mongoose
+      if(query){
+        query = this.convertIds(query);
+      }
       const rs = await this.entityClass.find(query).populate('owner');
       code = Code.SUCCESS;
       data = rs;
@@ -36,6 +39,9 @@ export class BrandModel extends Model {
       // const r = await repo.findOne(query);
 
       // mongoose
+      if(query){
+        query = this.convertIds(query);
+      }
       const {_doc} = await this.entityClass.findOne(query).populate('owner');
       code = Code.SUCCESS;
       data = _doc;
