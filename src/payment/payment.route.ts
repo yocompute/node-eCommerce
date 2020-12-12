@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
 import { parseQuery } from "../middlewares/parse-query";
-import { ProductController } from "./product.controller";
-import { ProductModel } from "./product.model";
+import { PaymentController } from "./payment.controller";
+import { PaymentModel } from "./payment.model";
 
-export function ProductRoute(){
+export function PaymentRoute(){
   const router = express.Router();
-  const model: ProductModel = new ProductModel({});
-  const controller = new ProductController(model);
+  const model: PaymentModel = new PaymentModel({});
+  const controller = new PaymentController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });
   router.get('/', [parseQuery], (req:Request, res:Response) => { controller.find(req, res); });

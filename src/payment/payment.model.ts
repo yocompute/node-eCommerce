@@ -1,11 +1,11 @@
 
 import { IModelParams, Model } from "../model";
-import { Product } from "./product.entity";
+import { Payment } from "./payment.entity";
 import { Code, IModelResult} from "../model";
 
-export class ProductModel extends Model {
+export class PaymentModel extends Model {
     constructor(params: IModelParams) {
-        super(Product, params);
+        super(Payment, params);
     }
 
 
@@ -21,7 +21,7 @@ export class ProductModel extends Model {
       if(query){
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('brand');
+      const rs = await this.entityClass.find(query).populate('user').populate('items.product').populate('items.brand');
       code = Code.SUCCESS;
       data = rs;
       return { code, data, error: '' };
@@ -42,7 +42,7 @@ export class ProductModel extends Model {
       if(query){
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query).populate('brand');
+      const {_doc} = await this.entityClass.findOne(query).populate('user').populate('items.product').populate('items.brand');
       code = Code.SUCCESS;
       data = _doc;
       return { code, data, error: '' };

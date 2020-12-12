@@ -5,9 +5,9 @@ export const parseQuery = (req: Request, res: Response, next:any) => {
   if (!query) {
     next();
   }
-  if (query.qStr) {
+  if (query.where) {
     try{
-      req.query = JSON.parse(<string>query.qStr);
+      req.query = JSON.parse(<string>query.where);
     } catch (e){
       console.log(e);
     }

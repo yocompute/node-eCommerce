@@ -1,5 +1,9 @@
 
 import SSE from "express-sse-ts";
+import { ObjectID } from "mongodb";
+import mongoose from './db';
+const { Types } = mongoose;
+
 // import { Connection, Repository, EntityTarget, FindManyOptions, FindConditions } from "typeorm";
 
 export const Code = {
@@ -29,6 +33,18 @@ export class Model {
     this.entityClass = entityClass;
   }
 
+  convertIds(where: any){
+    const q: any = {};
+    Object.keys(where).forEach(key => {
+      if(typeof where[key] === 'string' && ObjectID.isValid(where[key])){
+        q[key] = new Types.ObjectId(where[key]);
+      }else{
+        q[key] = where[key];
+      }
+    });
+    return q;
+  }
+
   async find(query: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
@@ -38,6 +54,9 @@ export class Model {
       // const r = await repo.find(query);
 
       // mongoose
+      if(query){
+        query = this.convertIds(query);
+      }
       const rs = await this.entityClass.find(query);
       code = Code.SUCCESS;
       data = rs;
@@ -56,6 +75,9 @@ export class Model {
       // const r = await repo.findOne(query);
 
       // mongoose
+      if(query){
+        query = this.convertIds(query);
+      }
       const {_doc} = await this.entityClass.findOne(query);
       code = Code.SUCCESS;
       data = _doc;
