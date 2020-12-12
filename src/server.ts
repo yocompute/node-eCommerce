@@ -16,6 +16,7 @@ import "reflect-metadata";
 import { AuthRoute } from "./auth/auth.route";
 import { UserRoute } from "./user/user.route";
 import { BrandRoute } from "./brand/brand.route";
+import { CategoryRoute } from "./category/category.route";
 import { ProductRoute } from "./product/product.route";
 
 dotenv.config();
@@ -35,10 +36,11 @@ app.use(bodyParser.json({ limit: "1mb" }));
 app.use(SVC_PATH + "/auth", AuthRoute());
 app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
+app.use(SVC_PATH + "/categories", CategoryRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
 
 
 app.listen(cfg.SVC_PORT, () => {
   console.log(`svc path: ${SVC_PATH}`);
-  console.log(`API listening at http://localhost:${cfg.SVC_PORT}`);
+  console.log(`API listening at http://127.0.0.1:${cfg.SVC_PORT}`);
 });

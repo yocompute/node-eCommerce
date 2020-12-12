@@ -5,7 +5,7 @@ import { CategoryModel } from "./category.model";
 
 export function CategoryRoute(){
   const router = express.Router();
-  const model = new CategoryModel({});
+  const model: CategoryModel = new CategoryModel({});
   const controller = new CategoryController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });

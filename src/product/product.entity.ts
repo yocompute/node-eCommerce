@@ -12,6 +12,7 @@ const ProductSchema = new Schema({
     imageUrl: String,
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+    category: { type: Schema.Types.ObjectId, ref: 'Category' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })

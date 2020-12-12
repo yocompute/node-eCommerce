@@ -5,7 +5,7 @@ import { BrandModel } from "./brand.model";
 
 export function BrandRoute(){
   const router = express.Router();
-  const model = new BrandModel({});
+  const model: BrandModel = new BrandModel({});
   const controller = new BrandController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });
