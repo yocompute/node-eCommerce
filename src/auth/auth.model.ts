@@ -25,8 +25,8 @@ export class AuthModel extends Model {
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);
             if (_id) {
-                const {data} = await this.findOne({ _id });
-                if (data) {
+                const {data} = await this.userModel.findOne({ _id });
+                if(data){
                     delete data.password;
                 }
                 code = Code.SUCCESS;
@@ -50,7 +50,7 @@ export class AuthModel extends Model {
             if(data){
                 const athenticated = bcrypt.compareSync(credential.password, data.password);
                 if(athenticated){
-                    tokenId = jwt.sign(data._id.toString(), JWT_SECRET);
+                    tokenId = jwt.sign(data.userId.toString(), JWT_SECRET);
                 }else{
                     error = 'Authentication fail';
                 }
