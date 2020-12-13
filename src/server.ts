@@ -5,7 +5,6 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 // import SSE from 'express-sse-ts';
 
-// import {PaymentRoute} from './routes/payment';
 
 import { cfg } from "./config";
 // import {DataBase} from '../dbs';
@@ -18,6 +17,7 @@ import { UserRoute } from "./user/user.route";
 import { BrandRoute } from "./brand/brand.route";
 import { CategoryRoute } from "./category/category.route";
 import { ProductRoute } from "./product/product.route";
+import { PaymentRoute } from './payment/payment.route';
 
 dotenv.config();
 
@@ -38,7 +38,7 @@ app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
 app.use(SVC_PATH + "/categories", CategoryRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
-
+app.use(SVC_PATH + "/payments", PaymentRoute());
 
 app.listen(cfg.SVC_PORT, () => {
   console.log(`svc path: ${SVC_PATH}`);
