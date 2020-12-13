@@ -89,7 +89,7 @@ export class AuthModel extends Model {
                 const {data} = await this.userModel.findOne({ email: d.email });
                 if(data){
                     const password = await bcrypt.hash(d.password, cfg.N_SALT_ROUNDS);
-                    const userId: any = data?._id; 
+                    const userId: any = data._id; 
                     await this.save({
                         userId,
                         email: d.email,

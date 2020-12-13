@@ -10,13 +10,14 @@ import { cfg } from "./config";
 // import {DataBase} from '../dbs';
 // import { EventRoute } from './routes/event';
 
-import "reflect-metadata";
+// import "reflect-metadata";
 
 import { AuthRoute } from "./auth/auth.route";
 import { UserRoute } from "./user/user.route";
 import { BrandRoute } from "./brand/brand.route";
 import { ProductRoute } from "./product/product.route";
 import { PaymentRoute } from './payment/payment.route';
+import { UploaderRoute } from "./uploader/uploader.route";
 
 dotenv.config();
 
@@ -37,6 +38,8 @@ app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
 app.use(SVC_PATH + "/payments", PaymentRoute());
+app.use(SVC_PATH + "/uploads", UploaderRoute());
+
 
 app.listen(cfg.SVC_PORT, () => {
   console.log(`svc path: ${SVC_PATH}`);
