@@ -1,30 +1,24 @@
 import mongoose from '../db';
-import { PictureSchema } from '../picture/picture.entity';
 
 const { Schema, Types } = mongoose;
 
-const ProductSchema = new Schema({
+const CategorySchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
-    price: Number,
-    saleTaxRate: Number,
-    cost: Number,
-    purchaseTaxRate: Number,
-    pictures: [PictureSchema],
+    imageUrl: String,
     status: String,
-    brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
-    category: { type: Schema.Types.ObjectId, ref: 'Category' },
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
 
-export const Product = mongoose.model('Product', ProductSchema, 'products');
+export const Category = mongoose.model('Category', CategorySchema, 'categories');
 
 // import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
 
-// @Entity({name: "products"})
-// export class Product {
+// @Entity({name: "categories"})
+// export class Category {
 
 //     @ObjectIdColumn()
 //     _id: ObjectID | undefined;
@@ -36,17 +30,8 @@ export const Product = mongoose.model('Product', ProductSchema, 'products');
 //     description: string | undefined;
     
 //     @Column()
-//     price: number;
-
-//     @Column()
-//     cost: number;
-
-//     @Column()
-//     taxRate: number;
-
-//     @Column()
 //     imageUrl: string | undefined;
-    
+
 //     @Column()
 //     createUTC: Date;
 
