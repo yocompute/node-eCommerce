@@ -5,7 +5,7 @@ import { Controller } from "../controller";
 import { PaymentModel } from "./payment.model";
 
 export class PaymentController extends Controller {
-    paymentModel;
+    paymentModel: PaymentModel;
     constructor(model: PaymentModel) {
         super(model);
         this.paymentModel = model;

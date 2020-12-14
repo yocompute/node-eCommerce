@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express";
 import { parseQuery } from "../middlewares/parse-query";
-import { BrandController } from "./brand.controller";
-import { BrandModel } from "./brand.model";
+import { QrcodeController } from "./qrcode.controller";
+import { QrcodeModel } from "./qrcode.model";
 import { MulterUploader } from "../middlewares/uploader";
 
-export function BrandRoute(){
+export function QrcodeRoute(){
   const router = express.Router();
-  const model: BrandModel = new BrandModel({});
-  const controller = new BrandController(model);
+  const model = new QrcodeModel({});
+  const controller = new QrcodeController(model);
   
   // router.get('/:id', [parseQuery], (req:Request, res:Response) => { controller.getById(req, res); });
   router.get('/', [parseQuery], (req:Request, res:Response) => { controller.find(req, res); });

@@ -4,13 +4,13 @@ import { Request, Response } from "express";
 import { Controller } from "../controller";
 import { Code } from "../model";
 import { UploaderModel } from "../uploader/uploader.model";
-import { BrandModel } from "./brand.model";
+import { QrcodeModel } from "./qrcode.model";
 
-export class BrandController extends Controller {
-    brandModel: BrandModel;
-    constructor(model: BrandModel) {
+export class QrcodeController extends Controller {
+    qrcodeModel: QrcodeModel;
+    constructor(model: QrcodeModel) {
         super(model);
-        this.brandModel = model;
+        this.qrcodeModel = model;
     }
 
     /**
@@ -22,7 +22,7 @@ export class BrandController extends Controller {
         const query: any = req.query;
 
         // mongoose
-        const r = await this.brandModel.find(query);
+        const r = await this.qrcodeModel.find(query);
 
         res.setHeader('Content-Type', 'application/json');
         res.send(r);
@@ -30,8 +30,8 @@ export class BrandController extends Controller {
 
 
     async upload(req: Request, res: Response) {
-        const brandId = req.params.id;
-        const r = await this.brandModel.findOne({ _id: brandId });
+        const qrcodeId = req.params.id;
+        const r = await this.qrcodeModel.findOne({ _id: qrcodeId });
 
         // @ts-ignore
         const defaultFilename = `${req.fileInfo.filename}`;
@@ -39,16 +39,16 @@ export class BrandController extends Controller {
         const srcPath = `${projectPath}/${process.env.AWS_S3_PATH}/${defaultFilename}`;
         const ret: any = await UploaderModel.saveToAws(defaultFilename, srcPath);
 
-        const brand = r.data;
-        if (brand) {
-            if (!brand.pictures) {
-                brand.pictures = [ret.data];
-            } else if (brand.pictures.length === 0) {
-                brand.pictures[0] = (ret.data);
+        const qrcode = r.data;
+        if (qrcode) {
+            if (!qrcode.pictures) {
+                qrcode.pictures = [ret.data];
+            } else if (qrcode.pictures.length === 0) {
+                qrcode.pictures[0] = (ret.data);
             }
 
             try {
-                await this.brandModel.update({ _id: brandId }, brand);
+                await this.qrcodeModel.update({ _id: qrcodeId }, qrcode);
             } catch (e) {
                 console.error(e);
                 return res.json({
@@ -59,7 +59,7 @@ export class BrandController extends Controller {
 
         return res.json({
             code: Code.SUCCESS,
-            data: brand,
+            data: qrcode,
         });
     }
 }
