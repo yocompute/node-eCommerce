@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { ProductController } from "./product.controller";
 import { ProductModel } from "./product.model";
+import { MulterUploader } from "../middlewares/uploader";
 
 export function ProductRoute(){
   const router = express.Router();
@@ -12,5 +13,6 @@ export function ProductRoute(){
   router.get('/', [parseQuery], (req:Request, res:Response) => { controller.find(req, res); });
   router.post('/', (req:Request, res:Response) => { controller.insertOne(req, res); });
   router.put('/:id', (req:Request, res:Response) => { controller.updateOne(req, res); });
+  router.post('/upload/:id', MulterUploader.single("upload"), (req:Request, res:Response) => { controller.upload(req, res)});
   return router;
 }

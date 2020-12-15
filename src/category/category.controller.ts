@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
-import { PaymentModel } from "./payment.model";
+import { CategoryModel } from "./category.model";
 
-export class PaymentController extends Controller {
-    paymentModel: PaymentModel;
-    constructor(model: PaymentModel) {
+export class CategoryController extends Controller {
+    categoryModel;
+    constructor(model: CategoryModel) {
         super(model);
-        this.paymentModel = model;
+        this.categoryModel = model;
     }
 
     /**
@@ -20,7 +20,7 @@ export class PaymentController extends Controller {
         const query: any = req.query;
 
         // mongoose
-        const r = await this.paymentModel.find(query);
+        const r = await this.categoryModel.find(query);
 
         res.setHeader('Content-Type', 'application/json');
         res.send(r);

@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
@@ -9,8 +8,8 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
 const DB_AUTH_SOURCE = process.env.DB_AUTH_SOURCE;
 
-const CONNECTION_STR = DB_USERNAME ? `mongodb://${DB_USERNAME}:${DB_PASSWORD}@localhost:27017/${DB_NAME}?authSource=${DB_AUTH_SOURCE}`
-    : `mongodb://localhost:27017`;
+const CONNECTION_STR = DB_USERNAME ? `mongodb://${DB_USERNAME}:${DB_PASSWORD}@127.0.0.1:27017/${DB_NAME}?authSource=${DB_AUTH_SOURCE}`
+    : `mongodb://127.0.0.1:27017/${DB_NAME}`;
 
 mongoose.connect(CONNECTION_STR, {useNewUrlParser: true, useUnifiedTopology: true});
 

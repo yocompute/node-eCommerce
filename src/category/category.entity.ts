@@ -1,25 +1,24 @@
 import mongoose from '../db';
-import { PictureSchema } from '../picture/picture.entity';
 
 const { Schema, Types } = mongoose;
 
-const BrandSchema = new Schema({
+const CategorySchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
-    pictures: [PictureSchema],
+    imageUrl: String,
     status: String,
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
 
-export const Brand = mongoose.model('Brand', BrandSchema, 'brands');
+export const Category = mongoose.model('Category', CategorySchema, 'categories');
 
 // import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
 
-// @Entity({name: "brands"})
-// export class Brand {
+// @Entity({name: "categories"})
+// export class Category {
 
 //     @ObjectIdColumn()
 //     _id: ObjectID | undefined;

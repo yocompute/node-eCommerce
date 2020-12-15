@@ -1,4 +1,5 @@
 import mongoose from '../db';
+import { PictureSchema } from '../picture/picture.entity';
 
 const { Schema, Types } = mongoose;
 
@@ -10,9 +11,10 @@ const ProductSchema = new Schema({
     saleTaxRate: Number,
     cost: Number,
     purchaseTaxRate: Number,
-    imageUrl: String,
+    pictures: [PictureSchema],
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+    category: { type: Schema.Types.ObjectId, ref: 'Category' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })

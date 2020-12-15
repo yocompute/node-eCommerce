@@ -1,12 +1,13 @@
 
 import { IModelParams, Model } from "../model";
-import { Product } from "./product.entity";
-import { Code, IModelResult } from "../model";
+import { Qrcode } from "./qrcode.entity";
+import { Code, IModelResult} from "../model";
 
-export class ProductModel extends Model {
-  constructor(params: IModelParams) {
-    super(Product, params);
-  }
+export class QrcodeModel extends Model {
+    constructor(params: IModelParams) {
+        super(Qrcode, params);
+    }
+
 
   async find(query: any): Promise<IModelResult> {
     let data: any = [];
@@ -17,10 +18,10 @@ export class ProductModel extends Model {
       // const r = await repo.find(query);
 
       // mongoose
-      if (query) {
+      if(query){
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('brand').populate('category');
+      const rs = await this.entityClass.find(query).populate('owner');
       code = Code.SUCCESS;
       data = rs;
       return { code, data, error: '' };
@@ -38,10 +39,10 @@ export class ProductModel extends Model {
       // const r = await repo.findOne(query);
 
       // mongoose
-      if (query) {
+      if(query){
         query = this.convertIds(query);
       }
-      const { _doc } = await this.entityClass.findOne(query).populate('brand').populate('category');
+      const {_doc} = await this.entityClass.findOne(query).populate('owner');
       code = Code.SUCCESS;
       data = _doc;
       return { code, data, error: '' };
