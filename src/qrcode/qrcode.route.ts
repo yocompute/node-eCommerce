@@ -13,7 +13,7 @@ export function QrcodeRoute(){
   router.get('/', [parseQuery], (req:Request, res:Response) => { controller.find(req, res); });
   router.post('/', (req:Request, res:Response) => { controller.insertOne(req, res); });
   router.put('/:id', (req:Request, res:Response) => { controller.updateOne(req, res); });
-  router.post('/upload/:id', MulterUploader.single("upload"), (req:Request, res:Response) => { controller.upload(req, res)});
+  // router.post('/upload/:id', MulterUploader.single("upload"), (req:Request, res:Response) => { controller.upload(req, res)});
 
   return router;
 }

@@ -1,13 +1,10 @@
 import mongoose from '../db';
-import { PictureSchema } from '../picture/picture.entity';
-
 const { Schema, Types } = mongoose;
 
 const QrcodeSchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
-    pictures: [PictureSchema],
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
     createUTC: {type: Date, default: new Date()},
