@@ -70,12 +70,12 @@ export class Controller {
 
     async updateOne(req: Request, res: Response): Promise<void> {
         const id = req.params.id;
-        const updates = req.body.data;
+        const updates = { $set: { ...req.body, updateUTC: new Date() } };
         let code = Code.FAIL;
         let data = '';
         res.setHeader("Content-Type", "application/json");
         if (updates) {
-            const r = await this.model.update({ id }, updates);
+            const r = await this.model.updateOne({ _id: id }, updates);
             res.send(r);
         } else {
             res.send({

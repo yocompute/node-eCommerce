@@ -48,7 +48,7 @@ export class ProductController extends Controller {
       }
 
       try {
-        await this.productModel.update({ _id: productId }, product);
+        await this.productModel.updateOne({ _id: productId }, product);
       } catch (e) {
         console.error(e);
         return res.json({

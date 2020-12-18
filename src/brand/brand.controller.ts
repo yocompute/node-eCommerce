@@ -48,7 +48,8 @@ export class BrandController extends Controller {
             }
 
             try {
-                await this.brandModel.update({ _id: brandId }, brand);
+                // await this.brandModel.update({ _id: brandId }, brand);
+                await this.brandModel.updateOne({ _id: brandId }, brand);
             } catch (e) {
                 console.error(e);
                 return res.json({
