@@ -117,8 +117,9 @@ export class Model {
       // mongoose
       // const r = await this.entityClass.update(query, updates);
       const r = await this.entityClass.updateOne(query, updates);
+      const obj = await this.entityClass.findOne(query);
       code = Code.SUCCESS;
-      data = r;
+      data = obj;
       return { code, data, error: '' };
     } catch (error) {
       return { code, data, error };
