@@ -105,7 +105,7 @@ export class Model {
     }
   }
 
-  async update(query: any, updates: any): Promise<IModelResult> {
+  async updateOne(query: any, updates: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
     try {
@@ -114,9 +114,10 @@ export class Model {
       // const r = await repo.update(query, updates);
       
       // mongoose
-      const r = await this.entityClass.update(query, updates);
+      const r = await this.entityClass.updateOne(query, updates);
+      const {_doc} = await this.entityClass.findOne(query);
       code = Code.SUCCESS;
-      data = r;
+      data = _doc;
       return { code, data, error: '' };
     } catch (error) {
       return { code, data, error };

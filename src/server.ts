@@ -20,6 +20,7 @@ import { QrcodeRoute } from "./qrcode/qrcode.route";
 import { ProductRoute } from "./product/product.route";
 import { PaymentRoute } from './payment/payment.route';
 import { UploaderRoute } from "./uploader/uploader.route";
+import { SpecRoute } from "./spec/spec.route";
 
 dotenv.config();
 
@@ -43,7 +44,7 @@ app.use(SVC_PATH + "/qrcodes", QrcodeRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
 app.use(SVC_PATH + "/payments", PaymentRoute());
 app.use(SVC_PATH + "/uploads", UploaderRoute());
-
+app.use(SVC_PATH + "/specs", SpecRoute());
 
 app.listen(cfg.SVC_PORT, () => {
   console.log(`svc path: ${SVC_PATH}`);
