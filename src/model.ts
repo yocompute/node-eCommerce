@@ -105,6 +105,7 @@ export class Model {
     }
   }
 
+
   async updateOne(query: any, updates: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;

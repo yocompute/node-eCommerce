@@ -28,7 +28,6 @@ export class QrcodeController extends Controller {
         res.send(r);
     }
 
-
     // async upload(req: Request, res: Response) {
     //     const qrcodeId = req.params.id;
     //     const r = await this.qrcodeModel.findOne({ _id: qrcodeId });

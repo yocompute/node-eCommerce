@@ -21,7 +21,7 @@ export class QrcodeModel extends Model {
       if(query){
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('owner');
+      const rs = await this.entityClass.find(query).populate('brand');
       code = Code.SUCCESS;
       data = rs;
       return { code, data, error: '' };
@@ -42,7 +42,7 @@ export class QrcodeModel extends Model {
       if(query){
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query).populate('owner');
+      const {_doc} = await this.entityClass.findOne(query).populate('brand');
       code = Code.SUCCESS;
       data = _doc;
       return { code, data, error: '' };

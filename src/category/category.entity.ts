@@ -8,7 +8,6 @@ const CategorySchema = new Schema({
     description: String,
     imageUrl: String,
     status: String,
-    owner: { type: Schema.Types.ObjectId, ref: 'User' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
