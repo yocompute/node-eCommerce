@@ -105,7 +105,7 @@ export class Model {
     }
   }
 
-  // async update(query: any, updates: any): Promise<IModelResult> {
+
   async updateOne(query: any, updates: any): Promise<IModelResult> {
     let data: any = [];
     let code = Code.FAIL;
@@ -115,11 +115,10 @@ export class Model {
       // const r = await repo.update(query, updates);
       
       // mongoose
-      // const r = await this.entityClass.update(query, updates);
       const r = await this.entityClass.updateOne(query, updates);
-      const obj = await this.entityClass.findOne(query);
+      const {_doc} = await this.entityClass.findOne(query);
       code = Code.SUCCESS;
-      data = obj;
+      data = _doc;
       return { code, data, error: '' };
     } catch (error) {
       return { code, data, error };

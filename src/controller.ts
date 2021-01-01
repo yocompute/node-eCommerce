@@ -69,8 +69,10 @@ export class Controller {
     }
 
     async updateOne(req: Request, res: Response): Promise<void> {
+
         const id = req.params.id;
         const updates = { $set: Object.assign(Object.assign({}, req.body), { updateUTC: new Date() }) };
+
         let code = Code.FAIL;
         let data = '';
         res.setHeader("Content-Type", "application/json");

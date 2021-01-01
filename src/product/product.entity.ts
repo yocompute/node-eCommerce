@@ -1,7 +1,23 @@
 import mongoose from '../db';
 import { PictureSchema } from '../picture/picture.entity';
-
+import { SpecSchema } from '../spec/spec.entity';
 const { Schema, Types } = mongoose;
+
+// export const ProductSpecOptionSchema = new Schema({
+//     id: String,
+//     name: String,
+//     price: Number
+// })
+
+// export const ProductSpecSchema = new Schema({
+//     name: String,
+//     description: String,
+//     options: [ProductSpecOptionSchema],
+//     status: String,
+//     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+//     createUTC: {type: Date, default: new Date()},
+//     updateUTC: Date,
+// })
 
 const ProductSchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
@@ -12,6 +28,7 @@ const ProductSchema = new Schema({
     cost: Number,
     purchaseTaxRate: Number,
     pictures: [PictureSchema],
+    specs: [SpecSchema],
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
