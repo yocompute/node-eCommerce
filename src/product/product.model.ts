@@ -20,7 +20,7 @@ export class ProductModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('brand').populate('category').populate('specs');
+      const rs = await this.entityClass.find(query).populate('brand').populate('category').populate('specs').populate('additions');
       code = Code.SUCCESS;
       data = rs;
       return { code, data, error: '' };
@@ -41,7 +41,7 @@ export class ProductModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const { _doc } = await this.entityClass.findOne(query).populate('brand').populate('category').populate('specs');
+      const { _doc } = await this.entityClass.findOne(query).populate('brand').populate('category').populate('specs').populate('additions');
       code = Code.SUCCESS;
       data = _doc;
       return { code, data, error: '' };
