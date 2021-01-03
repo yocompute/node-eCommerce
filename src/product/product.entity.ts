@@ -29,6 +29,12 @@ const ProductSchema = new Schema({
     purchaseTaxRate: Number,
     pictures: [PictureSchema],
     specs: [SpecSchema],
+    type: String, // S: single, C: combo, A: addition
+    additions: {
+        type: [String],
+        required: false,
+        default: undefined
+    }, // addition product id array
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
