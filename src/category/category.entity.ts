@@ -8,6 +8,7 @@ const CategorySchema = new Schema({
     description: String,
     imageUrl: String,
     status: String,
+    brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
