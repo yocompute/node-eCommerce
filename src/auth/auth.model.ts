@@ -20,7 +20,7 @@ export class AuthModel extends Model {
 
     async getUserByTokenId(tokenId: string): Promise<IModelResult> {
         let code = Code.FAIL;
-        let error = '';
+        const error = '';
         const JWT_SECRET: any = process.env.JWT_SECRET;
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);

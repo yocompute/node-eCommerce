@@ -1,7 +1,7 @@
 import mongoose from '../db';
 import { SpecOptionSchema } from './specOption.entity';
 
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 
 export const SpecSchema = new Schema({

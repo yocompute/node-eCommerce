@@ -53,8 +53,8 @@ export class Controller {
 
     async insertOne(req: Request, res: Response): Promise<void> {
         const d = req.body;
-        let code = Code.FAIL;
-        let data = '';
+        const code = Code.FAIL;
+        const data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             const r = await this.model.save(d);
@@ -73,8 +73,8 @@ export class Controller {
         const id = req.params.id;
         const updates = { $set: Object.assign(Object.assign({}, req.body), { updateUTC: new Date() }) };
 
-        let code = Code.FAIL;
-        let data = '';
+        const code = Code.FAIL;
+        const data = '';
         res.setHeader("Content-Type", "application/json");
         if (updates) {
             const r = await this.model.updateOne({ _id: id }, updates);

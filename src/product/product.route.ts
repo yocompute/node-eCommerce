@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { ProductController } from "./product.controller";
 import { ProductModel } from "./product.model";
 import { MulterUploader } from "../middlewares/uploader";
 
-export function ProductRoute() {
+export function ProductRoute() : Router{
   const router = express.Router();
   const model: ProductModel = new ProductModel({});
   const controller = new ProductController(model);

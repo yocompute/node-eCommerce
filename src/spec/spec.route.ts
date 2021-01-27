@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { SpecController } from "./spec.controller";
 import { SpecModel } from "./spec.model";
 
-export function SpecRoute(){
-  const router = express.Router();
+export function SpecRoute(): Router{
+  const router = Router();
   const model: SpecModel = new SpecModel({});
   const controller = new SpecController(model);
   

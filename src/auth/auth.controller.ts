@@ -14,32 +14,29 @@ export class AuthController extends Controller {
 
     async getUserByTokenId(req: Request, res: Response): Promise<any> {
         const tokenId = req.params.tokenId;
-        let code = Code.FAIL;
-        let data = '';
         res.setHeader("Content-Type", "application/json");
         if (tokenId) {
             const r = await this.authModel.getUserByTokenId(tokenId);
             res.send(r);
         } else {
             res.send({
-                code,
-                data,
+                code: Code.FAIL,
+                data:'',
                 error: 'no field to update'
             })
         }
     }
+
     async login(req: Request, res: Response): Promise<void> {
         const d = req.body;
-        let code = Code.FAIL;
-        let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             const r = await this.authModel.login(d);
             res.send(r);
         } else {
             res.send({
-                code,
-                data,
+                code: Code.FAIL,
+                data: '',
                 error: 'no data to save'
             })
         }
@@ -47,16 +44,14 @@ export class AuthController extends Controller {
 
     async signup(req: Request, res: Response): Promise<void> {
         const d = req.body;
-        let code = Code.FAIL;
-        let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             const r = await this.authModel.signup(d);
             res.send(r);
         } else {
             res.send({
-                code,
-                data,
+                code: Code.FAIL,
+                data: '',
                 error: 'no data to save'
             })
         }
