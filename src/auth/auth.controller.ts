@@ -16,14 +16,18 @@ export class AuthController extends Controller {
         const tokenId = req.params.tokenId;
         res.setHeader("Content-Type", "application/json");
         if (tokenId) {
-            const r = await this.authModel.getUserByTokenId(tokenId);
-            res.send(r);
+            try{
+                const r = await this.authModel.getUserByTokenId(tokenId);
+                if(r.data){
+                    res.status(200).send(r);
+                }else{
+                    res.status(403).send(r);
+                }
+            }catch(error){
+                res.status(500).send({error: error.message});
+            }
         } else {
-            res.send({
-                code: Code.FAIL,
-                data:'',
-                error: 'no field to update'
-            })
+            res.status(400).send({error: 'No data in request'});
         }
     }
 
@@ -31,14 +35,18 @@ export class AuthController extends Controller {
         const d = req.body;
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.authModel.login(d);
-            res.send(r);
+            try {
+                const r = await this.authModel.login(d);
+                if(r.data){
+                    res.status(200).send(r);
+                }else{
+                    res.status(403).send(r);
+                }
+            }catch(error){
+                res.status(500).send({error: error.message});
+            }
         } else {
-            res.send({
-                code: Code.FAIL,
-                data: '',
-                error: 'no data to save'
-            })
+            res.status(400).send({error: 'No data in request'});
         }
     }
 
@@ -46,14 +54,14 @@ export class AuthController extends Controller {
         const d = req.body;
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.authModel.signup(d);
-            res.send(r);
+            try{
+                const r = await this.authModel.signup(d);
+                res.status(200).send(r);
+            }catch(error){
+                res.status(500).send(error);
+            }
         } else {
-            res.send({
-                code: Code.FAIL,
-                data: '',
-                error: 'no data to save'
-            })
+            res.status(204).send({error: 'no data in request'})
         }
     }
 }

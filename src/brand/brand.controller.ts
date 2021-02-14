@@ -20,20 +20,25 @@ export class BrandController extends Controller {
     */
     async find(req: Request, res: Response): Promise<void> {
         const query: any = req.query;
-
-        // mongoose
-        const r = await this.brandModel.find(query);
-
         res.setHeader('Content-Type', 'application/json');
-        res.send(r);
+
+        try {
+            const r = await this.brandModel.find(query);
+            if(r.data){
+                res.status(200).send(r);
+            }else{
+                res.status(403).send(r);
+            }
+        }catch(error){
+            res.status(500).send({error: error.message});
+        }
     }
 
 
-    async upload(req: Request, res: Response) {
+    async upload(req: any, res: Response) {
         const brandId = req.params.id;
         const r = await this.brandModel.findOne({ _id: brandId });
 
-        // @ts-ignore
         const defaultFilename = `${req.fileInfo.filename}`;
         const projectPath = process.cwd();
         const srcPath = `${projectPath}/${process.env.AWS_S3_PATH}/${defaultFilename}`;

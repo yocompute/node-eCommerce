@@ -16,10 +16,9 @@ export interface IModelParams{
   sse?: SSE
 }
 
-export interface IModelResult{
-    code: string,
-    data: any,
-    error: string
+export interface IModelResult<T>{
+    data: T | null,
+    error: string | null
 }
 
 export class Model {
@@ -45,9 +44,8 @@ export class Model {
     return q;
   }
 
-  async find(query: any): Promise<IModelResult> {
+  async find(query: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -58,17 +56,15 @@ export class Model {
         query = this.convertIds(query);
       }
       const rs = await this.entityClass.find(query);
-      code = Code.SUCCESS;
       data = rs;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 
-  async findOne(query: any): Promise<IModelResult> {
+  async findOne(query: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -79,17 +75,15 @@ export class Model {
         query = this.convertIds(query);
       }
       const {_doc} = await this.entityClass.findOne(query);
-      code = Code.SUCCESS;
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 
-  async save(entity: any): Promise<IModelResult> {
+  async save(entity: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -97,18 +91,16 @@ export class Model {
 
       // mongoose
       const { _doc } = await this.entityClass.create(entity);
-      code = Code.SUCCESS;
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 
 
-  async updateOne(query: any, updates: any): Promise<IModelResult> {
+  async updateOne(query: any, updates: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -117,11 +109,10 @@ export class Model {
       // mongoose
       const r = await this.entityClass.updateOne(query, updates);
       const {_doc} = await this.entityClass.findOne(query);
-      code = Code.SUCCESS;
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 }

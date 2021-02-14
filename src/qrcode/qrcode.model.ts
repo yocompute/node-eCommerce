@@ -9,7 +9,7 @@ export class QrcodeModel extends Model {
     }
 
 
-  async find(query: any): Promise<IModelResult> {
+  async find(query: any): Promise<any> {
     let data: any = [];
     let code = Code.FAIL;
     try {
@@ -30,7 +30,7 @@ export class QrcodeModel extends Model {
     }
   }
 
-  async findOne(query: any): Promise<IModelResult> {
+  async findOne(query: any): Promise<any> {
     let data: any = [];
     let code = Code.FAIL;
     try {

@@ -18,9 +18,7 @@ export class AuthModel extends Model {
         this.userModel = new Model(User, {});
     }
 
-    async getUserByTokenId(tokenId: string): Promise<IModelResult> {
-        let code = Code.FAIL;
-        const error = '';
+    async getUserByTokenId(tokenId: string): Promise<IModelResult<UserModel>> {
         const JWT_SECRET: any = process.env.JWT_SECRET;
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);
@@ -28,21 +26,19 @@ export class AuthModel extends Model {
                 const {data} = await this.userModel.findOne({ _id });
                 if(data){
                     delete data.password;
+                    return { data, error: null};
+                }else{
+                    return { data: null, error: 'Authentication Failed'};
                 }
-                code = Code.SUCCESS;
-                return { code, data, error };
             } else {
-                return { code, data: null, error: 'Authentication Fail' };
+                return { data: null, error: 'Invalid token'};
             }
         } catch (error) {
-            return { code, data: null, error: 'Authentication Exception: ${error}' };
+            throw new Error(`Authentication exception: ${error}`);
         }
     }
 
-    async login(credential: any): Promise<IModelResult> {
-        let code = Code.FAIL;
-        let tokenId = null;
-        let error = '';
+    async login(credential: any): Promise<IModelResult<string>> {
         const JWT_SECRET: any = process.env.JWT_SECRET;
         const email = credential.email;
         try {
@@ -50,20 +46,20 @@ export class AuthModel extends Model {
             if(data){
                 const athenticated = bcrypt.compareSync(credential.password, data.password);
                 if(athenticated){
-                    tokenId = jwt.sign(data.userId.toString(), JWT_SECRET);
+                    return { data: jwt.sign(data.userId.toString(), JWT_SECRET), error: null};
                 }else{
-                    error = 'Authentication fail';
+                    return { data: null, error: 'Authentication Failed'};
                 }
-            }
+            }else{
+                return { data: null, error: 'Authentication Failed'};
 
-            code = Code.SUCCESS;
-            return { code, data: tokenId, error };
+            }
         } catch (error) {
-            return { code, data: tokenId, error };
+            throw new Error(`Exception: ${error}`);
         }
     }
 
-    async signup(d: any): Promise<IModelResult> {
+    async signup(d: any): Promise<any> {
         let code = Code.FAIL;
         let tokenId = '';
         let error = '';
@@ -104,7 +100,7 @@ export class AuthModel extends Model {
             code = Code.SUCCESS;
             return { code, data: tokenId, error };
         } catch (error) {
-            return { code, data: tokenId, error };
+            throw new Error(`signup exception: ${error}`);
         }
     }
 }

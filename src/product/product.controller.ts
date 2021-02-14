@@ -29,11 +29,10 @@ export class ProductController extends Controller {
   }
 
 
-  async upload(req: Request, res: Response) {
+  async upload(req: any, res: Response) {
     const productId = req.params.id;
     const r = await this.productModel.findOne({ _id: productId });
 
-    // @ts-ignore
     const defaultFilename = `${req.fileInfo.filename}`;
     const projectPath = process.cwd();
     const srcPath = `${projectPath}/${process.env.AWS_S3_PATH}/${defaultFilename}`;
