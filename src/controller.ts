@@ -43,28 +43,36 @@ export class Controller {
     */
     async find(req: Request, res: Response): Promise<void> {
         const query: any = req.query;
-
-        // mongoose
-        const r = await this.model.find(query);
-
         res.setHeader('Content-Type', 'application/json');
-        res.send(r);
+
+        try {
+            const r = await this.model.find(query);
+            if(r.data){
+                res.status(200).send(r);
+            }else{
+                res.status(403).send(r);
+            }
+        }catch(error){
+            res.status(500).send({error: error.message});
+        }
     }
 
     async insertOne(req: Request, res: Response): Promise<void> {
         const d = req.body;
-        let code = Code.FAIL;
-        let data = '';
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
-            const r = await this.model.save(d);
-            res.send(r);
+            try {
+                const r = await this.model.save(d);
+                if(r.data){
+                    res.status(200).send(r);
+                }else{
+                    res.status(403).send(r);
+                }
+            }catch(error){
+                res.status(500).send({error: error.message});
+            }
         } else {
-            res.send({
-                code,
-                data,
-                error: 'no data to save'
-            })
+            res.status(400).send({error: 'No data in request'});
         }
     }
 
@@ -73,18 +81,22 @@ export class Controller {
         const id = req.params.id;
         const updates = { $set: Object.assign(Object.assign({}, req.body), { updateUTC: new Date() }) };
 
-        let code = Code.FAIL;
-        let data = '';
+        const code = Code.FAIL;
+        const data = '';
         res.setHeader("Content-Type", "application/json");
         if (updates) {
-            const r = await this.model.updateOne({ _id: id }, updates);
-            res.send(r);
+            try {
+                const r = await this.model.updateOne({ _id: id }, updates);
+                if(r.data){
+                    res.status(200).send(r);
+                }else{
+                    res.status(403).send(r);
+                }
+            }catch(error){
+                res.status(500).send({error: error.message});
+            }
         } else {
-            res.send({
-                code,
-                data,
-                error: 'no field to update'
-            })
+            res.status(400).send({error: 'No data in request'});
         }
     }
 

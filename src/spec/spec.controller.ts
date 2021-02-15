@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
-import { Code } from "../model";
-import { UploaderModel } from "../uploader/uploader.model";
 import { SpecModel } from "./spec.model";
 
 export class SpecController extends Controller {

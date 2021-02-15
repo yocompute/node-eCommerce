@@ -1,6 +1,6 @@
 import mongoose from '../db';
 
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 export const PictureSchema = new Schema({
     name: String,

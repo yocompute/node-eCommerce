@@ -3,7 +3,7 @@ import { parseQuery } from "../middlewares/parse-query";
 import { UserController } from "./user.controller";
 import { UserModel } from "./user.model";
 
-export function UserRoute(){
+export function UserRoute() : express.Router {
   const router = express.Router();
   const model = new UserModel({});
   const controller = new UserController(model);

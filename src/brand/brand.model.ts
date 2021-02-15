@@ -9,9 +9,9 @@ export class BrandModel extends Model {
     }
 
 
-  async find(query: any): Promise<IModelResult> {
+  async find(query: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
+    
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -22,17 +22,17 @@ export class BrandModel extends Model {
         query = this.convertIds(query);
       }
       const rs = await this.entityClass.find(query).populate('owner');
-      code = Code.SUCCESS;
+      
       data = rs;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 
-  async findOne(query: any): Promise<IModelResult> {
+  async findOne(query: any): Promise<any> {
     let data: any = [];
-    let code = Code.FAIL;
+    
     try {
       // typeorm
       // const repo = this.connection.getRepository(this.entity);
@@ -43,11 +43,11 @@ export class BrandModel extends Model {
         query = this.convertIds(query);
       }
       const {_doc} = await this.entityClass.findOne(query).populate('owner');
-      code = Code.SUCCESS;
+      
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 }

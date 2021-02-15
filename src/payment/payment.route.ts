@@ -1,9 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { PaymentController } from "./payment.controller";
 import { PaymentModel } from "./payment.model";
 
-export function PaymentRoute(){
+export function PaymentRoute() : Router{
   const router = express.Router();
   const model: PaymentModel = new PaymentModel({});
   const controller = new PaymentController(model);
