@@ -12,13 +12,15 @@ import { UserModel } from "../user/user.model";
 
 export class AuthModel extends Model {
     userModel: UserModel;
+    authModel: Model;
     constructor(params: IModelParams) {
         super(Auth, params);
 
         this.userModel = new Model(User, {});
+        this.authModel = new Model(Auth, {});
     }
 
-    async getUserByTokenId(tokenId: string): Promise<IModelResult<UserModel>> {
+    async getUserByTokenId(tokenId: string): Promise<IModelResult<any>> {
         const JWT_SECRET: any = process.env.JWT_SECRET;
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);
@@ -42,7 +44,7 @@ export class AuthModel extends Model {
         const JWT_SECRET: any = process.env.JWT_SECRET;
         const email = credential.email;
         try {
-            const {data} = await this.findOne({email});
+            const {data} = await this.authModel.findOne({email});
             if(data){
                 const athenticated = bcrypt.compareSync(credential.password, data.password);
                 if(athenticated){
@@ -60,7 +62,6 @@ export class AuthModel extends Model {
     }
 
     async signup(d: any): Promise<any> {
-        let code = Code.FAIL;
         let tokenId = '';
         let error = '';
         const JWT_SECRET: any = process.env.JWT_SECRET;
@@ -70,10 +71,10 @@ export class AuthModel extends Model {
             // const authRepo = this.connection.getRepository(this.entity);
             // const userRepo = this.connection.getRepository(User);
 
-            const {data} = await this.find({ email });
+            const {data} = await this.authModel.find({ email });
 
-            if (data && data.length > 0) {
-                // pass
+            if (data && data.length > 0) { // duplicated email
+                return { data: null, error: 'The email was already registered.'}
             } else {
                 await this.userModel.save({
                     username: d.username,
@@ -86,7 +87,7 @@ export class AuthModel extends Model {
                 if(data){
                     const password = await bcrypt.hash(d.password, cfg.N_SALT_ROUNDS);
                     const userId: any = data._id; 
-                    await this.save({
+                    await this.authModel.save({
                         userId,
                         email: d.email,
                         password
@@ -97,8 +98,7 @@ export class AuthModel extends Model {
                 }
             }
 
-            code = Code.SUCCESS;
-            return { code, data: tokenId, error };
+            return { data: tokenId, error };
         } catch (error) {
             throw new Error(`signup exception: ${error}`);
         }
