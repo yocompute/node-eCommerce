@@ -13,5 +13,7 @@ export function AuthRoute(){
   router.post('/login', (req:Request, res:Response) => { controller.login(req, res); });
   router.post('/signup', (req:Request, res:Response) => { controller.signup(req, res); });
 
+  router.post('/signupBrand', (req:Request, res:Response) => { controller.signupBrand(req, res); });
+
   return router;
 }
