@@ -1,6 +1,18 @@
+import { Model as MongooseModel, Document } from 'mongoose';
+import { IBrand } from '../brand/brand.entity';
 import mongoose from '../db';
 
 const { Schema } = mongoose;
+
+export interface ICategory extends Document{
+    name: string,
+    description: string,
+    imageUrl: string,
+    status: string,
+    brand: IBrand | string,
+    createUTC: Date,
+    updateUTC?: Date,
+  }
 
 const CategorySchema = new Schema({
     name: String,
@@ -12,28 +24,5 @@ const CategorySchema = new Schema({
     updateUTC: Date,
 })
 
-export const Category = mongoose.model('Category', CategorySchema, 'categories');
+export const Category: MongooseModel<ICategory> = mongoose.model<ICategory>('Category', CategorySchema, 'categories');
 
-// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
-
-// @Entity({name: "categories"})
-// export class Category {
-
-//     @ObjectIdColumn()
-//     _id: ObjectID | undefined;
-
-//     @Column()
-//     name: string;
-
-//     @Column()
-//     description: string | undefined;
-    
-//     @Column()
-//     imageUrl: string | undefined;
-
-//     @Column()
-//     createUTC: Date;
-
-//     @Column()
-//     updateUTC: Date;
-// }

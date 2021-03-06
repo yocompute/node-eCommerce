@@ -1,8 +1,22 @@
+import { Model as MongooseModel, Document } from 'mongoose';
+import { IBrand } from '../brand/brand.entity';
 import mongoose from '../db';
-import { SpecOptionSchema } from './specOption.entity';
+import { ISpecOption, SpecOptionSchema } from './specOption.entity';
 
 const { Schema } = mongoose;
 
+
+
+export interface ISpec extends Document {
+    _id: string,
+    name: string,
+    description: string,
+    options: ISpecOption[],
+    status: string,
+    brand: IBrand | string,
+    createUTC: Date,
+    updateUTC?: Date,
+}
 
 export const SpecSchema = new Schema({
     name: String,
@@ -10,8 +24,8 @@ export const SpecSchema = new Schema({
     options: [SpecOptionSchema],
     status: String,
     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
-    createUTC: {type: Date, default: new Date()},
+    createUTC: { type: Date, default: new Date() },
     updateUTC: Date,
 })
 
-export const Spec = mongoose.model('Spec', SpecSchema, 'specs');
+export const Spec: MongooseModel<ISpec> = mongoose.model<ISpec>('Spec', SpecSchema, 'specs');

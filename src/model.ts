@@ -1,89 +1,99 @@
-
+import { Model as MongooseModel, Document, FilterQuery, Query } from 'mongoose';
 import SSE from "express-sse-ts";
-import * as core from 'express-serve-static-core';
 import { ObjectID } from "mongodb";
 import mongoose from './db';
 const { Types } = mongoose;
 
-export interface IModelParams{
+export interface IModelParams {
   // connection: Connection,
   sse?: SSE
 }
 
-export interface IModelResult<T>{
-    data: T | null,
-    error: string | null
+export interface IModelResult<T> {
+  data: T | null,
+  error: string | null
 }
 
-export class Model {
+export class Model<T extends Document> {
   // public connection: Connection;
   public sse?: SSE;
-  public entityClass: any;
+  public model: MongooseModel<T>;
 
-  constructor(entityClass: any, params: IModelParams) {
+  constructor(model: MongooseModel<T>, params: IModelParams) {
     // this.connection = params.connection;
     this.sse = params.sse;
-    this.entityClass = entityClass;
+    this.model = model;
   }
 
-  convertIds(where: any): any{
+  convertIds(where: any): any {
     const q: any = {};
     Object.keys(where).forEach(key => {
-      if(typeof where[key] === 'string' && ObjectID.isValid(where[key])){
+      if (typeof where[key] === 'string' && ObjectID.isValid(where[key])) {
         q[key] = new Types.ObjectId(where[key]);
-      }else{
+      } else {
         q[key] = where[key];
       }
     });
     return q;
   }
 
-  async find(query: core.Query): Promise<any> {
-    let data: any = [];
+
+  /**
+   * Note: This function should be overwritten if it need populate
+   * @param query 
+   */
+  async find(query: FilterQuery<any>): Promise<IModelResult<T[]>> {
+    let data: T[] = [];
     try {
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query);
+      const rs: T[] = await this.model.find(query);
+
       data = rs;
       return { data, error: '' };
     } catch (error) {
-      throw new Error(`Exception: ${error}`);
+      throw new Error(`${error}`);
     }
   }
 
-  async findOne(query: any): Promise<any> {
-    let data: any = [];
+  /**
+   * Note: This function should be overwritten if it need populate
+   * @param query 
+   */
+  async findOne(query: FilterQuery<any>): Promise<IModelResult<T>> {
+    let data: T;
     try {
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query);
-      data = _doc;
+      const r: any = await this.model.findOne(query);
+      data = r._doc;
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+
+  async insertOne(entity: any): Promise<IModelResult<T>> {
+    let data: T;
+    try {
+      const r: any = await this.model.create(entity);
+      data = r._doc;
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);
     }
   }
 
-  async save(entity: any): Promise<any> {
-    let data: any = [];
-    try {
-      const { _doc } = await this.entityClass.create(entity);
-      data = _doc;
-      return { data, error: '' };
-    } catch (error) {
-      throw new Error(`Exception: ${error}`);
-    }
-  }
 
-
-  async updateOne(query: core.Query, updates: any): Promise<any> {
-    let data: any = [];
+  async updateOne(query: FilterQuery<any>, updates: any): Promise<IModelResult<T>> {
+    let data: T;
     try {
-      await this.entityClass.updateOne(query, updates);
-      const {_doc} = await this.entityClass.findOne(query);
-      data = _doc;
+      await this.model.updateOne(query, updates);
+      const r: any = await this.model.findOne(query);
+      data = r._doc;
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);

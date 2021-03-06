@@ -1,7 +1,20 @@
+import { Model as MongooseModel, Document } from 'mongoose';
 import mongoose from '../db';
 import { PictureSchema } from '../picture/picture.entity';
+import { IPicture } from '../uploader/uploader.model';
+import { IUser } from '../user/user.entity';
 
 const { Schema } = mongoose;
+
+export interface IBrand extends Document{
+    name: string,
+    description: string,
+    pictures: IPicture[],
+    status: string,
+    owner: IUser | string,
+    createUTC: Date,
+    updateUTC?: Date,
+  }
 
 const BrandSchema = new Schema({
     name: String,
@@ -13,28 +26,5 @@ const BrandSchema = new Schema({
     updateUTC: Date,
 })
 
-export const Brand = mongoose.model('Brand', BrandSchema, 'brands');
+export const Brand: MongooseModel<IBrand> = mongoose.model<IBrand>('Brand', BrandSchema, 'brands');
 
-// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
-
-// @Entity({name: "brands"})
-// export class Brand {
-
-//     @ObjectIdColumn()
-//     _id: ObjectID | undefined;
-
-//     @Column()
-//     name: string;
-
-//     @Column()
-//     description: string | undefined;
-    
-//     @Column()
-//     imageUrl: string | undefined;
-
-//     @Column()
-//     createUTC: Date;
-
-//     @Column()
-//     updateUTC: Date;
-// }
