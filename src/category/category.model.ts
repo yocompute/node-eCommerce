@@ -1,53 +1,50 @@
-
+import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
 import { Category } from "./category.entity";
-import { Code, IModelResult} from "../model";
+import { IModelResult } from "../model";
+import { IBrand } from '../brand/brand.model';
+
+export interface ICategory {
+  name: string,
+  description: string,
+  imageUrl: string,
+  status: string,
+  brand: IBrand | string,
+  createUTC: Date,
+  updateUTC: Date,
+}
 
 export class CategoryModel extends Model {
-    constructor(params: IModelParams) {
-        super(Category, params);
-    }
+  constructor(params: IModelParams) {
+    super(Category, params);
+  }
 
 
-  async find(query: any): Promise<IModelResult> {
-    let data: any = [];
-    let code = Code.FAIL;
+  async find(query: core.Query): Promise<IModelResult<ICategory[]>> {
+    let data: ICategory[] = [];
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.find(query);
-
-      // mongoose
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('owner');
-      code = Code.SUCCESS;
+      const rs: ICategory[] = await this.entityClass.find(query).populate('brand');
       data = rs;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`${error}`);
     }
   }
 
-  async findOne(query: any): Promise<IModelResult> {
-    let data: any = [];
-    let code = Code.FAIL;
+  async findOne(query: core.Query): Promise<IModelResult<ICategory>> {
+    let data: ICategory;
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.findOne(query);
-
-      // mongoose
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query).populate('owner');
-      code = Code.SUCCESS;
+      const { _doc } = await this.entityClass.findOne(query).populate('brand');
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`${error}`);
     }
   }
 }

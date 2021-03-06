@@ -3,13 +3,13 @@ import * as core from 'express-serve-static-core';
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
-import { PaymentModel } from "./payment.model";
+import { SpecModel } from "./spec.model";
 
-export class PaymentController extends Controller {
-    paymentModel: PaymentModel;
-    constructor(model: PaymentModel) {
+export class SpecController extends Controller {
+    specModel: SpecModel;
+    constructor(model: SpecModel) {
         super(model);
-        this.paymentModel = model;
+        this.specModel = model;
     }
 
     /**
@@ -21,9 +21,10 @@ export class PaymentController extends Controller {
         const query: core.Query = req.query;
 
         // mongoose
-        const r = await this.paymentModel.find(query);
+        const r = await this.specModel.find(query);
 
         res.setHeader('Content-Type', 'application/json');
         res.send(r);
     }
+
 }

@@ -1,53 +1,55 @@
-
+import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
 import { Brand } from "./brand.entity";
-import { Code, IModelResult} from "../model";
+import { IModelResult } from "../model";
+import { IPicture } from "../uploader/uploader.model";
+import { IUser } from '../user/user.model';
+
+export interface IBrand {
+  name: string,
+  description: string,
+  pictures: IPicture[],
+  status: string,
+  owner: IUser | string,
+  createUTC: Date,
+  updateUTC: Date,
+}
 
 export class BrandModel extends Model {
-    constructor(params: IModelParams) {
-        super(Brand, params);
-    }
+  constructor(params: IModelParams) {
+    super(Brand, params);
+  }
 
 
-  async find(query: any): Promise<IModelResult> {
-    let data: any = [];
-    let code = Code.FAIL;
+  async find(query: core.Query): Promise<IModelResult<IBrand[]>> {
+    let data: IBrand[] = [];
+
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.find(query);
-
-      // mongoose
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('owner');
-      code = Code.SUCCESS;
+      const rs: IBrand[] = await this.entityClass.find(query).populate('owner');
+
       data = rs;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 
-  async findOne(query: any): Promise<IModelResult> {
-    let data: any = [];
-    let code = Code.FAIL;
-    try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.findOne(query);
+  async findOne(query: core.Query): Promise<IModelResult<IBrand>> {
+    let data: IBrand;
 
-      // mongoose
-      if(query){
+    try {
+      if (query) {
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query).populate('owner');
-      code = Code.SUCCESS;
+      const { _doc } = await this.entityClass.findOne(query).populate('owner');
+
       data = _doc;
-      return { code, data, error: '' };
+      return { data, error: '' };
     } catch (error) {
-      return { code, data, error };
+      throw new Error(`Exception: ${error}`);
     }
   }
 }

@@ -1,110 +1,102 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Code } from "../controller";
 import { IModelParams, IModelResult, Model } from "../model";
 import { Auth } from "./auth.entity";
 import { cfg } from '../config';
 
 import { User } from '../user/user.entity';
-import { UserModel } from "../user/user.model";
-
+import { UserModel, IUser } from "../user/user.model";
 
 
 export class AuthModel extends Model {
     userModel: UserModel;
+    authModel: Model;
     constructor(params: IModelParams) {
         super(Auth, params);
 
         this.userModel = new Model(User, {});
+        this.authModel = new Model(Auth, {});
     }
 
-    async getUserByTokenId(tokenId: string): Promise<IModelResult> {
-        let code = Code.FAIL;
-        let error = '';
-        const JWT_SECRET: any = process.env.JWT_SECRET;
+    async getUserByTokenId(tokenId: string): Promise<IModelResult<IUser>> {
+        const JWT_SECRET: string = process.env.JWT_SECRET || '';
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);
             if (_id) {
                 const {data} = await this.userModel.findOne({ _id });
                 if(data){
                     delete data.password;
-                }
-                code = Code.SUCCESS;
-                return { code, data, error };
-            } else {
-                return { code, data: null, error: 'Authentication Fail' };
-            }
-        } catch (error) {
-            return { code, data: null, error: 'Authentication Exception: ${error}' };
-        }
-    }
-
-    async login(credential: any): Promise<IModelResult> {
-        let code = Code.FAIL;
-        let tokenId = null;
-        let error = '';
-        const JWT_SECRET: any = process.env.JWT_SECRET;
-        const email = credential.email;
-        try {
-            const {data} = await this.findOne({email});
-            if(data){
-                const athenticated = bcrypt.compareSync(credential.password, data.password);
-                if(athenticated){
-                    tokenId = jwt.sign(data.userId.toString(), JWT_SECRET);
+                    return { data, error: null};
                 }else{
-                    error = 'Authentication fail';
+                    return { data: null, error: 'Authentication Failed'};
                 }
+            } else {
+                return { data: null, error: 'Invalid token'};
             }
-
-            code = Code.SUCCESS;
-            return { code, data: tokenId, error };
         } catch (error) {
-            return { code, data: tokenId, error };
+            throw new Error(`Authentication exception: ${error}`);
         }
     }
 
-    async signup(d: any): Promise<IModelResult> {
-        let code = Code.FAIL;
+    async loginByEmail(email: string, password: string): Promise<IModelResult<string>> {
+        const JWT_SECRET: string = process.env.JWT_SECRET || '';
+        try {
+            const {data} = await this.authModel.findOne({email});
+            if(data){
+                const athenticated = bcrypt.compareSync(password, data.password);
+                if(athenticated){
+                    return { data: jwt.sign(data.userId.toString(), JWT_SECRET), error: null};
+                }else{
+                    return { data: null, error: 'Authentication Failed'};
+                }
+            }else{
+                return { data: null, error: 'Authentication Failed'};
+
+            }
+        } catch (error) {
+            throw new Error(`Exception: ${error}`);
+        }
+    }
+
+    async signup(email: string, username: string, password: string): Promise<IModelResult<string>> {
         let tokenId = '';
         let error = '';
-        const JWT_SECRET: any = process.env.JWT_SECRET;
-        const email = d.email;
+        const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
         try {
             // const authRepo = this.connection.getRepository(this.entity);
             // const userRepo = this.connection.getRepository(User);
 
-            const {data} = await this.find({ email });
+            const {data} = await this.authModel.find({ email });
 
-            if (data && data.length > 0) {
-                // pass
+            if (data && data.length > 0) { // duplicated email
+                return { data: null, error: 'The email was already registered.'}
             } else {
                 await this.userModel.save({
-                    username: d.username,
-                    email: d.email,
+                    username: username,
+                    email: email,
                     balance: 0,
                     createUTC: new Date()
                 });
 
-                const {data} = await this.userModel.findOne({ email: d.email });
+                const {data} = await this.userModel.findOne({ email: email });
                 if(data){
-                    const password = await bcrypt.hash(d.password, cfg.N_SALT_ROUNDS);
-                    const userId: any = data._id; 
-                    await this.save({
+                    const hashed = await bcrypt.hash(password, cfg.N_SALT_ROUNDS);
+                    const userId: string = data._id; 
+                    await this.authModel.save({
                         userId,
-                        email: d.email,
-                        password
+                        email: email,
+                        password: hashed
                     });
-                    tokenId = jwt.sign(userId.toString(), JWT_SECRET);
+                    tokenId = jwt.sign(userId.toString(), JWT_SECRET || '');
                 }else{
                     error = 'Signup fail';
                 }
             }
 
-            code = Code.SUCCESS;
-            return { code, data: tokenId, error };
+            return { data: tokenId, error };
         } catch (error) {
-            return { code, data: tokenId, error };
+            throw new Error(`signup exception: ${error}`);
         }
     }
 }

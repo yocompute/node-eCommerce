@@ -1,6 +1,6 @@
 import mongoose from '../db';
 
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 const PaymentItemSchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: 'Product' },

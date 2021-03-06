@@ -2,9 +2,9 @@ import express, { Request, Response } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { QrcodeController } from "./qrcode.controller";
 import { QrcodeModel } from "./qrcode.model";
-import { MulterUploader } from "../middlewares/uploader";
+// import { MulterUploader } from "../middlewares/uploader";
 
-export function QrcodeRoute(){
+export function QrcodeRoute(): express.Router {
   const router = express.Router();
   const model = new QrcodeModel({});
   const controller = new QrcodeController(model);
