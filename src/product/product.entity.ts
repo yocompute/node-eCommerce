@@ -1,23 +1,33 @@
+import { Model as MongooseModel, Document } from 'mongoose';
+import { IBrand } from '../brand/brand.entity';
+import { ICategory } from '../category/category.entity';
 import mongoose from '../db';
 import { PictureSchema } from '../picture/picture.entity';
-import { SpecSchema } from '../spec/spec.entity';
+import { ISpec, SpecSchema } from '../spec/spec.entity';
+import { IPicture } from '../uploader/uploader.model';
 const { Schema } = mongoose;
 
-// export const ProductSpecOptionSchema = new Schema({
-//     id: String,
-//     name: String,
-//     price: Number
-// })
-
-// export const ProductSpecSchema = new Schema({
-//     name: String,
-//     description: String,
-//     options: [ProductSpecOptionSchema],
-//     status: String,
-//     brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
-//     createUTC: {type: Date, default: new Date()},
-//     updateUTC: Date,
-// })
+export interface IAddition{
+    type: string
+  }
+  
+  export interface IProduct extends Document{
+    name: string,
+    description: string,
+    price: number,
+    saleTaxRate: number,
+    cost: number,
+    purchaseTaxRate: number,
+    pictures: IPicture[],
+    specs: ISpec[],
+    type: string, // S: single, C: combo, A: addition
+    additions: IAddition[],// addition product id array
+    status: string,
+    brand: IBrand | string,
+    category: ICategory | string,
+    createUTC: Date,
+    updateUTC?: Date,
+  }
 
 const ProductSchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
@@ -42,37 +52,4 @@ const ProductSchema = new Schema({
     updateUTC: Date,
 })
 
-export const Product = mongoose.model('Product', ProductSchema, 'products');
-
-// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
-
-// @Entity({name: "products"})
-// export class Product {
-
-//     @ObjectIdColumn()
-//     _id: ObjectID | undefined;
-
-//     @Column()
-//     name: string;
-
-//     @Column()
-//     description: string | undefined;
-    
-//     @Column()
-//     price: number;
-
-//     @Column()
-//     cost: number;
-
-//     @Column()
-//     taxRate: number;
-
-//     @Column()
-//     imageUrl: string | undefined;
-    
-//     @Column()
-//     createUTC: Date;
-
-//     @Column()
-//     updateUTC: Date;
-// }
+export const Product: MongooseModel<IProduct> = mongoose.model<IProduct>('Product', ProductSchema, 'products');

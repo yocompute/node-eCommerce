@@ -1,6 +1,19 @@
+import {Model as MongooseModel, Document} from 'mongoose';
 import mongoose from '../db';
+import { IBrand } from '../brand/brand.entity';
+
 const { Schema } = mongoose;
 
+export interface IQrcode extends Document{
+    name: string,
+    description: string,
+    status: string,
+    brand: IBrand | string,
+    createUTC: Date,
+    updateUTC?: Date,
+  }
+
+  
 const QrcodeSchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
@@ -11,28 +24,4 @@ const QrcodeSchema = new Schema({
     updateUTC: Date,
 })
 
-export const Qrcode = mongoose.model('Qrcode', QrcodeSchema, 'qrcodes');
-
-// import {Entity, PrimaryColumn, ObjectID, Column, ObjectIdColumn} from "typeorm";
-
-// @Entity({name: "qrcodes"})
-// export class Qrcode {
-
-//     @ObjectIdColumn()
-//     _id: ObjectID | undefined;
-
-//     @Column()
-//     name: string;
-
-//     @Column()
-//     description: string | undefined;
-    
-//     @Column()
-//     imageUrl: string | undefined;
-
-//     @Column()
-//     createUTC: Date;
-
-//     @Column()
-//     updateUTC: Date;
-// }
+export const Qrcode: MongooseModel<IQrcode> = mongoose.model<IQrcode>('Qrcode', QrcodeSchema, 'qrcodes');

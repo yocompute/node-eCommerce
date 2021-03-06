@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
-import * as core from 'express-serve-static-core';
+// import { Request, Response } from "express";
+// import * as core from 'express-serve-static-core';
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
+import { IPayment } from "./payment.entity";
 import { PaymentModel } from "./payment.model";
 
-export class PaymentController extends Controller {
+export class PaymentController extends Controller<IPayment> {
     paymentModel: PaymentModel;
     constructor(model: PaymentModel) {
         super(model);
@@ -17,13 +18,13 @@ export class PaymentController extends Controller {
     * @param req 
     * @param res 
     */
-    async find(req: Request, res: Response): Promise<void> {
-        const query: core.Query = req.query;
+    // async find(req: Request, res: Response): Promise<void> {
+    //     const query: core.Query = req.query;
 
-        // mongoose
-        const r = await this.paymentModel.find(query);
+    //     // mongoose
+    //     const r = await this.paymentModel.find(query);
 
-        res.setHeader('Content-Type', 'application/json');
-        res.send(r);
-    }
+    //     res.setHeader('Content-Type', 'application/json');
+    //     res.send(r);
+    // }
 }

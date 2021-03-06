@@ -1,21 +1,19 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { IModelParams, IModelResult, Model } from "../model";
-import { Auth } from "./auth.entity";
+import { Auth, IAuth } from "./auth.entity";
 import { cfg } from '../config';
 
-import { User } from '../user/user.entity';
-import { UserModel, IUser } from "../user/user.model";
+import { IUser, User } from '../user/user.entity';
 
 
-export class AuthModel extends Model {
-    userModel: UserModel;
-    authModel: Model;
+export class AuthModel extends Model<IAuth> {
+    userModel: Model<IUser>;
+    
     constructor(params: IModelParams) {
         super(Auth, params);
 
-        this.userModel = new Model(User, {});
-        this.authModel = new Model(Auth, {});
+        this.userModel = new Model<IUser>(User, {});
     }
 
     async getUserByTokenId(tokenId: string): Promise<IModelResult<IUser>> {
@@ -25,7 +23,7 @@ export class AuthModel extends Model {
             if (_id) {
                 const {data} = await this.userModel.findOne({ _id });
                 if(data){
-                    delete data.password;
+                    // delete data.password;
                     return { data, error: null};
                 }else{
                     return { data: null, error: 'Authentication Failed'};
@@ -41,11 +39,11 @@ export class AuthModel extends Model {
     async loginByEmail(email: string, password: string): Promise<IModelResult<string>> {
         const JWT_SECRET: string = process.env.JWT_SECRET || '';
         try {
-            const {data} = await this.authModel.findOne({email});
+            const {data} = await this.findOne({email});
             if(data){
                 const athenticated = bcrypt.compareSync(password, data.password);
                 if(athenticated){
-                    return { data: jwt.sign(data.userId.toString(), JWT_SECRET), error: null};
+                    return { data: jwt.sign(data.user.toString(), JWT_SECRET), error: null};
                 }else{
                     return { data: null, error: 'Authentication Failed'};
                 }
@@ -67,14 +65,14 @@ export class AuthModel extends Model {
             // const authRepo = this.connection.getRepository(this.entity);
             // const userRepo = this.connection.getRepository(User);
 
-            const {data} = await this.authModel.find({ email });
+            const {data} = await this.find({ email });
 
             if (data && data.length > 0) { // duplicated email
                 return { data: null, error: 'The email was already registered.'}
             } else {
-                await this.userModel.save({
-                    username: username,
-                    email: email,
+                await this.userModel.insertOne({
+                    username,
+                    email,
                     balance: 0,
                     createUTC: new Date()
                 });
@@ -82,13 +80,13 @@ export class AuthModel extends Model {
                 const {data} = await this.userModel.findOne({ email: email });
                 if(data){
                     const hashed = await bcrypt.hash(password, cfg.N_SALT_ROUNDS);
-                    const userId: string = data._id; 
-                    await this.authModel.save({
-                        userId,
+                    const user: string = data._id.toString(); 
+                    await this.insertOne({
+                        user,
                         email: email,
                         password: hashed
                     });
-                    tokenId = jwt.sign(userId.toString(), JWT_SECRET || '');
+                    tokenId = jwt.sign(user.toString(), JWT_SECRET || '');
                 }else{
                     error = 'Signup fail';
                 }

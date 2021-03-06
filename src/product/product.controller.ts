@@ -1,13 +1,14 @@
 
 import { Request, Response } from "express";
-import * as core from 'express-serve-static-core';
+// import * as core from 'express-serve-static-core';
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
 import { IModelResult } from "../model";
 
 import { IFileRequest, IPicture, UploaderModel } from "../uploader/uploader.model";
-import { IProduct, ProductModel } from "./product.model";
+import { IProduct } from "./product.entity";
+import { ProductModel } from "./product.model";
 
 
 
@@ -17,7 +18,7 @@ interface ProductResponse extends Response {
   json: SendProduct<this>;
 }
 
-export class ProductController extends Controller {
+export class ProductController extends Controller<IProduct> {
   productModel: ProductModel;
   constructor(model: ProductModel) {
     super(model);
@@ -29,15 +30,15 @@ export class ProductController extends Controller {
   * @param req 
   * @param res 
   */
-  async find(req: Request, res: Response): Promise<void> {
-    const query: core.Query = req.query;
+  // async find(req: Request, res: Response): Promise<void> {
+  //   const query: core.Query = req.query;
 
-    // mongoose
-    const r = await this.productModel.find(query);
+  //   // mongoose
+  //   const r = await this.productModel.find(query);
 
-    res.setHeader('Content-Type', 'application/json');
-    res.send(r);
-  }
+  //   res.setHeader('Content-Type', 'application/json');
+  //   res.send(r);
+  // }
 
 
   async upload(req: IFileRequest, res: Response): Promise<ProductResponse> {
