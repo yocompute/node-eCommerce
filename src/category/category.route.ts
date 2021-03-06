@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
+import { Request, Response, Router} from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { CategoryController } from "./category.controller";
 import { CategoryModel } from "./category.model";
 
-export function CategoryRoute() {
-  const router = express.Router();
+export function CategoryRoute(): Router {
+  const router = Router();
   const model: CategoryModel = new CategoryModel({});
   const controller = new CategoryController(model);
 

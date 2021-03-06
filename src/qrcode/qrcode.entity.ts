@@ -1,5 +1,5 @@
 import mongoose from '../db';
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 const QrcodeSchema = new Schema({
     // _id: {type: Types.ObjectId, default: new Types.ObjectId()},

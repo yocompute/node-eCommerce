@@ -1,28 +1,35 @@
-
+import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
 import { Brand } from "./brand.entity";
-import { Code, IModelResult} from "../model";
+import { IModelResult } from "../model";
+import { IPicture } from "../uploader/uploader.model";
+import { IUser } from '../user/user.model';
+
+export interface IBrand {
+  name: string,
+  description: string,
+  pictures: IPicture[],
+  status: string,
+  owner: IUser | string,
+  createUTC: Date,
+  updateUTC: Date,
+}
 
 export class BrandModel extends Model {
-    constructor(params: IModelParams) {
-        super(Brand, params);
-    }
+  constructor(params: IModelParams) {
+    super(Brand, params);
+  }
 
 
-  async find(query: any): Promise<any> {
-    let data: any = [];
-    
+  async find(query: core.Query): Promise<IModelResult<IBrand[]>> {
+    let data: IBrand[] = [];
+
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.find(query);
-
-      // mongoose
-      if(query){
+      if (query) {
         query = this.convertIds(query);
       }
-      const rs = await this.entityClass.find(query).populate('owner');
-      
+      const rs: IBrand[] = await this.entityClass.find(query).populate('owner');
+
       data = rs;
       return { data, error: '' };
     } catch (error) {
@@ -30,20 +37,15 @@ export class BrandModel extends Model {
     }
   }
 
-  async findOne(query: any): Promise<any> {
-    let data: any = [];
-    
-    try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.findOne(query);
+  async findOne(query: core.Query): Promise<IModelResult<IBrand>> {
+    let data: IBrand;
 
-      // mongoose
-      if(query){
+    try {
+      if (query) {
         query = this.convertIds(query);
       }
-      const {_doc} = await this.entityClass.findOne(query).populate('owner');
-      
+      const { _doc } = await this.entityClass.findOne(query).populate('owner');
+
       data = _doc;
       return { data, error: '' };
     } catch (error) {

@@ -1,10 +1,9 @@
 import mongoose from '../db';
 import { PictureSchema } from '../picture/picture.entity';
 
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 const BrandSchema = new Schema({
-    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
     pictures: [PictureSchema],
