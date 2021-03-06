@@ -1,15 +1,9 @@
 
 import SSE from "express-sse-ts";
+import * as core from 'express-serve-static-core';
 import { ObjectID } from "mongodb";
 import mongoose from './db';
 const { Types } = mongoose;
-
-// import { Connection, Repository, EntityTarget, FindManyOptions, FindConditions } from "typeorm";
-
-export const Code = {
-  SUCCESS: 'success',
-  FAIL: 'fail'
-}
 
 export interface IModelParams{
   // connection: Connection,
@@ -32,7 +26,7 @@ export class Model {
     this.entityClass = entityClass;
   }
 
-  convertIds(where: any){
+  convertIds(where: any): any{
     const q: any = {};
     Object.keys(where).forEach(key => {
       if(typeof where[key] === 'string' && ObjectID.isValid(where[key])){
@@ -44,14 +38,9 @@ export class Model {
     return q;
   }
 
-  async find(query: any): Promise<any> {
+  async find(query: core.Query): Promise<any> {
     let data: any = [];
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.find(query);
-
-      // mongoose
       if(query){
         query = this.convertIds(query);
       }
@@ -66,11 +55,6 @@ export class Model {
   async findOne(query: any): Promise<any> {
     let data: any = [];
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.findOne(query);
-
-      // mongoose
       if(query){
         query = this.convertIds(query);
       }
@@ -85,11 +69,6 @@ export class Model {
   async save(entity: any): Promise<any> {
     let data: any = [];
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.save(entity);
-
-      // mongoose
       const { _doc } = await this.entityClass.create(entity);
       data = _doc;
       return { data, error: '' };
@@ -99,15 +78,10 @@ export class Model {
   }
 
 
-  async updateOne(query: any, updates: any): Promise<any> {
+  async updateOne(query: core.Query, updates: any): Promise<any> {
     let data: any = [];
     try {
-      // typeorm
-      // const repo = this.connection.getRepository(this.entity);
-      // const r = await repo.update(query, updates);
-      
-      // mongoose
-      const r = await this.entityClass.updateOne(query, updates);
+      await this.entityClass.updateOne(query, updates);
       const {_doc} = await this.entityClass.findOne(query);
       data = _doc;
       return { data, error: '' };

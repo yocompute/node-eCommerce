@@ -1,9 +1,8 @@
 import mongoose from '../db';
 
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 const CategorySchema = new Schema({
-    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     name: String,
     description: String,
     imageUrl: String,

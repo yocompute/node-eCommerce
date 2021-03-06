@@ -1,4 +1,6 @@
+
 import { Request, Response } from "express";
+import * as core from 'express-serve-static-core';
 import SSE from "express-sse-ts";
 // import { Connection, Repository, EntityTarget, FindManyOptions } from "typeorm";
 import { Model } from './model';
@@ -17,7 +19,7 @@ export interface IControllerParams {
 export class Controller {
     public model: Model;
 
-    constructor(model: any) {
+    constructor(model: Model) {
         this.model = model;
     }
 
@@ -25,10 +27,10 @@ export class Controller {
      * 
      * @param req 
      */
-    getAuthToken(req: Request) {
-        const s: any = req.get("Authorization");
+    getAuthToken(req: Request): string {
+        const s: string = req.get("Authorization") || '';
         if (!s) {
-            return null;
+            return '';
         } else if (s.indexOf('Bearer') !== -1) {
             return s.slice(7); // to remove 'Bear '
         } else {
@@ -42,7 +44,7 @@ export class Controller {
     * @param res 
     */
     async find(req: Request, res: Response): Promise<void> {
-        const query: any = req.query;
+        const query: core.Query = req.query;
         res.setHeader('Content-Type', 'application/json');
 
         try {
@@ -81,16 +83,14 @@ export class Controller {
         const id = req.params.id;
         const updates = { $set: Object.assign(Object.assign({}, req.body), { updateUTC: new Date() }) };
 
-        const code = Code.FAIL;
-        const data = '';
         res.setHeader("Content-Type", "application/json");
         if (updates) {
             try {
                 const r = await this.model.updateOne({ _id: id }, updates);
                 if(r.data){
-                    res.status(200).send(r);
+                    res.status(200).send({data: r});
                 }else{
-                    res.status(403).send(r);
+                    res.status(403).send({data: r});
                 }
             }catch(error){
                 res.status(500).send({error: error.message});

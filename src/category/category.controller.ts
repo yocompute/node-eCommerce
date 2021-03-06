@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import * as core from 'express-serve-static-core';
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
@@ -17,7 +18,7 @@ export class CategoryController extends Controller {
     * @param res 
     */
     async find(req: Request, res: Response): Promise<void> {
-        const query: any = req.query;
+        const query: core.Query = req.query;
 
         // mongoose
         const r = await this.categoryModel.find(query);

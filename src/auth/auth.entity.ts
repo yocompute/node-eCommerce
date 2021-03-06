@@ -1,14 +1,13 @@
 import mongoose from '../db';
 
 const { Schema, Types } = mongoose;
-const ObjectId = Types.ObjectId;
 
 const AuthSchema = new Schema({
-    _id: {type: ObjectId, default: new ObjectId()},
+    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     email: String,
     password: String,
     phone: String,
-    userId: ObjectId,
+    userId: Types.ObjectId,
     creatUTC: Date,
 })
 

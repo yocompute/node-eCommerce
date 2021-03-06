@@ -1,13 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Code } from "../controller";
 import { IModelParams, IModelResult, Model } from "../model";
 import { Auth } from "./auth.entity";
 import { cfg } from '../config';
 
 import { User } from '../user/user.entity';
-import { UserModel } from "../user/user.model";
-
+import { UserModel, IUser } from "../user/user.model";
 
 
 export class AuthModel extends Model {
@@ -20,8 +18,8 @@ export class AuthModel extends Model {
         this.authModel = new Model(Auth, {});
     }
 
-    async getUserByTokenId(tokenId: string): Promise<IModelResult<any>> {
-        const JWT_SECRET: any = process.env.JWT_SECRET;
+    async getUserByTokenId(tokenId: string): Promise<IModelResult<IUser>> {
+        const JWT_SECRET: string = process.env.JWT_SECRET || '';
         try {
             const _id = jwt.verify(tokenId, JWT_SECRET);
             if (_id) {
@@ -40,13 +38,12 @@ export class AuthModel extends Model {
         }
     }
 
-    async login(credential: any): Promise<IModelResult<string>> {
-        const JWT_SECRET: any = process.env.JWT_SECRET;
-        const email = credential.email;
+    async loginByEmail(email: string, password: string): Promise<IModelResult<string>> {
+        const JWT_SECRET: string = process.env.JWT_SECRET || '';
         try {
             const {data} = await this.authModel.findOne({email});
             if(data){
-                const athenticated = bcrypt.compareSync(credential.password, data.password);
+                const athenticated = bcrypt.compareSync(password, data.password);
                 if(athenticated){
                     return { data: jwt.sign(data.userId.toString(), JWT_SECRET), error: null};
                 }else{
@@ -61,11 +58,10 @@ export class AuthModel extends Model {
         }
     }
 
-    async signup(d: any): Promise<any> {
+    async signup(email: string, username: string, password: string): Promise<IModelResult<string>> {
         let tokenId = '';
         let error = '';
-        const JWT_SECRET: any = process.env.JWT_SECRET;
-        const email = d.email;
+        const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
         try {
             // const authRepo = this.connection.getRepository(this.entity);
@@ -77,22 +73,22 @@ export class AuthModel extends Model {
                 return { data: null, error: 'The email was already registered.'}
             } else {
                 await this.userModel.save({
-                    username: d.username,
-                    email: d.email,
+                    username: username,
+                    email: email,
                     balance: 0,
                     createUTC: new Date()
                 });
 
-                const {data} = await this.userModel.findOne({ email: d.email });
+                const {data} = await this.userModel.findOne({ email: email });
                 if(data){
-                    const password = await bcrypt.hash(d.password, cfg.N_SALT_ROUNDS);
-                    const userId: any = data._id; 
+                    const hashed = await bcrypt.hash(password, cfg.N_SALT_ROUNDS);
+                    const userId: string = data._id; 
                     await this.authModel.save({
                         userId,
-                        email: d.email,
-                        password
+                        email: email,
+                        password: hashed
                     });
-                    tokenId = jwt.sign(userId.toString(), JWT_SECRET);
+                    tokenId = jwt.sign(userId.toString(), JWT_SECRET || '');
                 }else{
                     error = 'Signup fail';
                 }

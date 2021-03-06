@@ -1,7 +1,7 @@
 import mongoose from '../db';
 import { PictureSchema } from '../picture/picture.entity';
 import { SpecSchema } from '../spec/spec.entity';
-const { Schema, Types } = mongoose;
+const { Schema } = mongoose;
 
 // export const ProductSpecOptionSchema = new Schema({
 //     id: String,

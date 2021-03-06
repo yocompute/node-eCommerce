@@ -1,4 +1,4 @@
-import express, { Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { parseQuery } from "../middlewares/parse-query";
 import { SpecController } from "./spec.controller";
 import { SpecModel } from "./spec.model";
