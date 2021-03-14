@@ -1,4 +1,4 @@
-import {Model as MongooseModel, Document, FilterQuery, Query} from 'mongoose';
+import {Document} from 'mongoose';
 import { Request, Response } from "express";
 import * as core from 'express-serve-static-core';
 import SSE from "express-sse-ts";

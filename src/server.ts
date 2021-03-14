@@ -21,6 +21,7 @@ import { ProductRoute } from "./product/product.route";
 import { PaymentRoute } from './payment/payment.route';
 import { UploaderRoute } from "./uploader/uploader.route";
 import { SpecRoute } from "./spec/spec.route";
+import { AuthMiddleWare } from "./middlewares/auth-middleware";
 
 dotenv.config();
 
@@ -33,9 +34,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false, limit: "1mb" }));
 app.use(bodyParser.json({ limit: "1mb" }));
 
+app.use(AuthMiddleWare);
+
 // the url for the EventSource
 // app.get('/events', sse.init);
-
 app.use(SVC_PATH + "/auth", AuthRoute());
 app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
