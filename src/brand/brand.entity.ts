@@ -6,6 +6,12 @@ import { IUser } from '../user/user.entity';
 
 const { Schema } = mongoose;
 
+export interface IBusinessHour{
+  opening: boolean,
+  start: string,
+  end: string,
+}
+
 export interface IBrand extends Document{
     name: string,
     description: string,
@@ -15,9 +21,16 @@ export interface IBrand extends Document{
     deliverMethods: string[],
     maxDeliverDistance: number,
     minConsumption: number,
+    businessHours: Map<string, IBusinessHour>,
     createUTC: Date,
     updateUTC?: Date,
   }
+
+const BusinessHuourSchema = new Schema({
+    opening: Boolean,
+    start: String,
+    end: String,
+}, { _id : false })
 
 const BrandSchema = new Schema({
     name: String,
@@ -27,6 +40,7 @@ const BrandSchema = new Schema({
     deliverMethods: [String],
     maxDeliverDistance: Number,
     minConsumption: Number,
+    businessHours: { type: Map, of: BusinessHuourSchema},
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
