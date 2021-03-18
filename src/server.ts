@@ -13,6 +13,7 @@ import { cfg } from "./config";
 // import "reflect-metadata";
 
 import { AuthRoute } from "./auth/auth.route";
+import { RoleRoute } from "./role/role.route";
 import { UserRoute } from "./user/user.route";
 import { BrandRoute } from "./brand/brand.route";
 import { CategoryRoute } from "./category/category.route";
@@ -39,6 +40,7 @@ app.use(AuthMiddleWare);
 // the url for the EventSource
 // app.get('/events', sse.init);
 app.use(SVC_PATH + "/auth", AuthRoute());
+app.use(SVC_PATH + "/roles", RoleRoute());
 app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
 app.use(SVC_PATH + "/categories", CategoryRoute());

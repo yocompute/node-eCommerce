@@ -9,6 +9,7 @@ export interface IUser extends Document{
     phone?: string,
     status: string,
     balance: number,
+    roles: string[],
     createUTC: Date,
     updateUTC?: Date,
 }
@@ -19,6 +20,7 @@ const UserSchema = new Schema({
     phone: String,
     status: String,
     balance: { Number, default: 0},
+    roles: [String],
     createUTC: {type: Date, default: new Date()},
     updateUTC: Date,
 })
