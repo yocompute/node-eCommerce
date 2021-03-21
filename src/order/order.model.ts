@@ -1,23 +1,22 @@
 import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
-import { Category, ICategory } from "./category.entity";
+import { IOrder, Order } from "./order.entity";
 import { IModelResult } from "../model";
 
 
-
-export class CategoryModel extends Model<ICategory> {
+export class OrderModel extends Model<IOrder> {
   constructor(params: IModelParams) {
-    super(Category, params);
+    super(Order, params);
   }
 
 
-  async find(query: core.Query): Promise<IModelResult<ICategory[]>> {
-    let data: ICategory[] = [];
+  async find(query: core.Query): Promise<IModelResult<IOrder[]>> {
+    let data: IOrder[] = [];
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: ICategory[] = await this.model.find(query).populate('brand');
+      const rs: IOrder[] = await this.model.find(query).populate('user').populate('items.product').populate('items.brand');
       data = rs;
       return { data, error: '' };
     } catch (error) {
@@ -25,13 +24,13 @@ export class CategoryModel extends Model<ICategory> {
     }
   }
 
-  async findOne(query: core.Query): Promise<IModelResult<ICategory>> {
-    let data: ICategory;
+  async findOne(query: core.Query): Promise<IModelResult<IOrder>> {
+    let data: IOrder;
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('brand');
+      const r: any = await this.model.findOne(query).populate('user').populate('items.product').populate('items.brand');
       data = r._doc; 
       return { data, error: '' };
     } catch (error) {

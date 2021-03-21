@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
-import * as core from 'express-serve-static-core';
+// import { Request, Response } from "express";
+// import * as core from 'express-serve-static-core';
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
+import { IQrcode } from "./qrcode.entity";
 import { QrcodeModel } from "./qrcode.model";
 
-export class QrcodeController extends Controller {
+export class QrcodeController extends Controller<IQrcode> {
     qrcodeModel: QrcodeModel;
     constructor(model: QrcodeModel) {
         super(model);
@@ -17,15 +18,15 @@ export class QrcodeController extends Controller {
     * @param req 
     * @param res 
     */
-    async find(req: Request, res: Response): Promise<void> {
-        const query: core.Query = req.query;
+    // async find(req: Request, res: Response): Promise<void> {
+    //     const query: core.Query = req.query;
 
-        // mongoose
-        const r = await this.qrcodeModel.find(query);
+    //     // mongoose
+    //     const r = await this.qrcodeModel.find(query);
 
-        res.setHeader('Content-Type', 'application/json');
-        res.send(r);
-    }
+    //     res.setHeader('Content-Type', 'application/json');
+    //     res.send(r);
+    // }
 
     // async upload(req: Request, res: Response) {
     //     const qrcodeId = req.params.id;

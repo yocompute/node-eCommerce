@@ -1,19 +1,10 @@
 import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
-import { Qrcode } from "./qrcode.entity";
+import { IQrcode, Qrcode } from "./qrcode.entity";
 import { IModelResult } from "../model";
-import { IBrand } from '../brand/brand.model';
 
-export interface IQrcode {
-  name: string,
-  description: string,
-  status: string,
-  brand: IBrand | string,
-  createUTC: Date,
-  updateUTC: Date,
-}
 
-export class QrcodeModel extends Model {
+export class QrcodeModel extends Model<IQrcode> {
   constructor(params: IModelParams) {
     super(Qrcode, params);
   }
@@ -25,7 +16,7 @@ export class QrcodeModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IQrcode[] = await this.entityClass.find(query).populate('brand');
+      const rs: IQrcode[] = await this.model.find(query).populate('brand');
 
       data = rs;
       return { data, error: '' };
@@ -40,8 +31,8 @@ export class QrcodeModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const { _doc } = await this.entityClass.findOne(query).populate('brand');
-      data = _doc;
+      const r: any = await this.model.findOne(query).populate('brand');
+      data = r._doc;
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

@@ -1,21 +1,11 @@
 import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
-import { Brand } from "./brand.entity";
+import { Brand, IBrand } from "./brand.entity";
 import { IModelResult } from "../model";
-import { IPicture } from "../uploader/uploader.model";
-import { IUser } from '../user/user.model';
 
-export interface IBrand {
-  name: string,
-  description: string,
-  pictures: IPicture[],
-  status: string,
-  owner: IUser | string,
-  createUTC: Date,
-  updateUTC: Date,
-}
 
-export class BrandModel extends Model {
+
+export class BrandModel extends Model<IBrand> {
   constructor(params: IModelParams) {
     super(Brand, params);
   }
@@ -28,7 +18,7 @@ export class BrandModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IBrand[] = await this.entityClass.find(query).populate('owner');
+      const rs: IBrand[] = await this.model.find(query).populate('owner');
 
       data = rs;
       return { data, error: '' };
@@ -44,9 +34,9 @@ export class BrandModel extends Model {
       if (query) {
         query = this.convertIds(query);
       }
-      const { _doc } = await this.entityClass.findOne(query).populate('owner');
+      const r: any = await this.model.findOne(query).populate('owner');
 
-      data = _doc;
+      data = r._doc; 
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);

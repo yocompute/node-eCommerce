@@ -13,14 +13,17 @@ import { cfg } from "./config";
 // import "reflect-metadata";
 
 import { AuthRoute } from "./auth/auth.route";
+import { RoleRoute } from "./role/role.route";
 import { UserRoute } from "./user/user.route";
 import { BrandRoute } from "./brand/brand.route";
 import { CategoryRoute } from "./category/category.route";
 import { QrcodeRoute } from "./qrcode/qrcode.route";
 import { ProductRoute } from "./product/product.route";
 import { PaymentRoute } from './payment/payment.route';
+import { OrderRoute } from './order/order.route';
 import { UploaderRoute } from "./uploader/uploader.route";
 import { SpecRoute } from "./spec/spec.route";
+import { AuthMiddleWare } from "./middlewares/auth-middleware";
 
 dotenv.config();
 
@@ -33,16 +36,19 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false, limit: "1mb" }));
 app.use(bodyParser.json({ limit: "1mb" }));
 
+app.use(AuthMiddleWare);
+
 // the url for the EventSource
 // app.get('/events', sse.init);
-
 app.use(SVC_PATH + "/auth", AuthRoute());
+app.use(SVC_PATH + "/roles", RoleRoute());
 app.use(SVC_PATH + "/users", UserRoute());
 app.use(SVC_PATH + "/brands", BrandRoute());
 app.use(SVC_PATH + "/categories", CategoryRoute());
 app.use(SVC_PATH + "/qrcodes", QrcodeRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
 app.use(SVC_PATH + "/payments", PaymentRoute());
+app.use(SVC_PATH + "/orders", OrderRoute());
 app.use(SVC_PATH + "/uploads", UploaderRoute());
 app.use(SVC_PATH + "/specs", SpecRoute());
 

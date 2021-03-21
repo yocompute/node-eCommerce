@@ -1,9 +1,9 @@
-
+import {Document} from 'mongoose';
 import { Request, Response } from "express";
 import * as core from 'express-serve-static-core';
 import SSE from "express-sse-ts";
 // import { Connection, Repository, EntityTarget, FindManyOptions } from "typeorm";
-import { Model } from './model';
+import { IModelResult, Model } from './model';
 
 export const Code = {
     SUCCESS: 'success',
@@ -16,10 +16,10 @@ export interface IControllerParams {
 }
 
 
-export class Controller {
-    public model: Model;
+export class Controller<T extends Document> {
+    public model: Model<T>;
 
-    constructor(model: Model) {
+    constructor(model: Model<T>) {
         this.model = model;
     }
 
@@ -48,7 +48,7 @@ export class Controller {
         res.setHeader('Content-Type', 'application/json');
 
         try {
-            const r = await this.model.find(query);
+            const r: IModelResult<T[]> = await this.model.find(query);
             if(r.data){
                 res.status(200).send(r);
             }else{
@@ -64,7 +64,7 @@ export class Controller {
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             try {
-                const r = await this.model.save(d);
+                const r = await this.model.insertOne(d);
                 if(r.data){
                     res.status(200).send(r);
                 }else{
@@ -86,7 +86,7 @@ export class Controller {
         res.setHeader("Content-Type", "application/json");
         if (updates) {
             try {
-                const r = await this.model.updateOne({ _id: id }, updates);
+                const r: IModelResult<T>  = await this.model.updateOne({ _id: id }, updates);
                 if(r.data){
                     res.status(200).send({data: r});
                 }else{

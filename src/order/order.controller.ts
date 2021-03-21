@@ -3,14 +3,14 @@
 // import SSE from "express-sse-ts";
 
 import { Controller } from "../controller";
-import { IPayment } from "./payment.entity";
-import { PaymentModel } from "./payment.model";
+import { IOrder } from "./order.entity";
+import { OrderModel } from "./order.model";
 
-export class PaymentController extends Controller<IPayment> {
-    paymentModel: PaymentModel;
-    constructor(model: PaymentModel) {
+export class OrderController extends Controller<IOrder> {
+    orderModel: OrderModel;
+    constructor(model: OrderModel) {
         super(model);
-        this.paymentModel = model;
+        this.orderModel = model;
     }
 
     /**
@@ -22,7 +22,7 @@ export class PaymentController extends Controller<IPayment> {
     //     const query: core.Query = req.query;
 
     //     // mongoose
-    //     const r = await this.paymentModel.find(query);
+    //     const r = await this.orderModel.find(query);
 
     //     res.setHeader('Content-Type', 'application/json');
     //     res.send(r);

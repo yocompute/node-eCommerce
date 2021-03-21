@@ -2,16 +2,15 @@ import {Request, Response} from "express";
 import { BrandModel } from "../brand/brand.model";
 import { Controller } from "../controller";
 import { IModelResult } from "../model";
+import { IUser } from "../user/user.entity";
+import { IAuth } from "./auth.entity";
 import { AuthModel } from "./auth.model";
-import { IUser } from '../user/user.model';
 
-export class AuthController extends Controller {
-    authModel: AuthModel;
+export class AuthController extends Controller<IAuth> {
     brandModel: BrandModel = new BrandModel({});
 
     constructor(model: AuthModel) {
         super(model);
-        this.authModel = model;
     }
 
     async getUserByTokenId(req: Request, res: Response) : Promise<void>{
@@ -19,7 +18,7 @@ export class AuthController extends Controller {
         res.setHeader("Content-Type", "application/json");
         if (tokenId) {
             try{
-                const r: IModelResult<IUser> = await this.authModel.getUserByTokenId(tokenId);
+                const r: IModelResult<IUser> = await (<AuthModel>this.model).getUserByTokenId(tokenId);
                 if(r.data){
                     res.status(200).send(r);
                 }else{
@@ -38,7 +37,7 @@ export class AuthController extends Controller {
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             try {
-                const r: IModelResult<string> = await this.authModel.loginByEmail(d.email, d.password);
+                const r: IModelResult<string> = await (<AuthModel>this.model).loginByEmail(d.email, d.password);
                 if(r.data){
                     res.status(200).send(r);
                 }else{
@@ -57,7 +56,7 @@ export class AuthController extends Controller {
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             try{
-                const r = await this.authModel.signup(d.email, d.username, d.password);
+                const r = await (<AuthModel>this.model).signup(d.email, d.username, d.password);
                 res.status(200).send(r);
             }catch(error){
                 res.status(500).send(error);
@@ -72,18 +71,19 @@ export class AuthController extends Controller {
         res.setHeader("Content-Type", "application/json");
         if (req.body) {
             try{
-                const r: IModelResult<string> = await this.authModel.signup(d.email, d.brand, d.password);
+                const r: IModelResult<string> = await (<AuthModel>this.model).signup(d.email, d.brand, d.password);
                 if(!r.error){
-                    const {data, error} = await this.authModel.getUserByTokenId(r.data || '');
+                    const {data, error} = await (<AuthModel>this.model).getUserByTokenId(r.data || '');
                     if(!error){
                         const brand = { 
                             name: d.brand,
                             description: '',
                             pictures: [],
                             status: 'A',
-                            owner: data?._id
+                            owner: data?._id,
+                            createUTC: new Date(),
                         }
-                        await this.brandModel.save(brand);
+                        await this.brandModel.insertOne(brand);
                         res.status(200).send(r);
                     }else{
                         res.status(500).send({data:'', error: 'Invalid token'});
