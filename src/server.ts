@@ -20,6 +20,7 @@ import { CategoryRoute } from "./category/category.route";
 import { QrcodeRoute } from "./qrcode/qrcode.route";
 import { ProductRoute } from "./product/product.route";
 import { PaymentRoute } from './payment/payment.route';
+import { OrderRoute } from './order/order.route';
 import { UploaderRoute } from "./uploader/uploader.route";
 import { SpecRoute } from "./spec/spec.route";
 import { AuthMiddleWare } from "./middlewares/auth-middleware";
@@ -47,6 +48,7 @@ app.use(SVC_PATH + "/categories", CategoryRoute());
 app.use(SVC_PATH + "/qrcodes", QrcodeRoute());
 app.use(SVC_PATH + "/products", ProductRoute());
 app.use(SVC_PATH + "/payments", PaymentRoute());
+app.use(SVC_PATH + "/orders", OrderRoute());
 app.use(SVC_PATH + "/uploads", UploaderRoute());
 app.use(SVC_PATH + "/specs", SpecRoute());
 
