@@ -56,14 +56,12 @@ export class AuthModel extends Model<IAuth> {
         }
     }
 
-    async signup(email: string, username: string, password: string): Promise<IModelResult<string>> {
+    async signup(email: string, username: string, password: string, roles: string[]): Promise<IModelResult<string>> {
         let tokenId = '';
         let error = '';
         const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
         try {
-            // const authRepo = this.connection.getRepository(this.entity);
-            // const userRepo = this.connection.getRepository(User);
 
             const {data} = await this.find({ email });
 
@@ -74,6 +72,7 @@ export class AuthModel extends Model<IAuth> {
                     username,
                     email,
                     balance: 0,
+                    roles,
                     createUTC: new Date()
                 });
 

@@ -88,9 +88,9 @@ export class Controller<T extends Document> {
             try {
                 const r: IModelResult<T>  = await this.model.updateOne({ _id: id }, updates);
                 if(r.data){
-                    res.status(200).send({data: r});
+                    res.status(200).send(r);
                 }else{
-                    res.status(403).send({data: r});
+                    res.status(403).send(r);
                 }
             }catch(error){
                 res.status(500).send({error: error.message});
