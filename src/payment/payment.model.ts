@@ -53,7 +53,7 @@ export class PaymentModel extends Model<IPayment> {
 
         const summary = this.getSummary(orderItems);
 
-        const order: IOrder = {...entity, payment: data._id, brand: brandId, items: orderItems, ...summary,};
+        const order: IOrder = {...entity, payment: data._id, brand: brandId, items: orderItems, ...summary};
         await orderModel.insertOne(order);
       }
       
@@ -69,7 +69,7 @@ export class PaymentModel extends Model<IPayment> {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IPayment[] = await this.model.find(query).populate('user').populate('items.product').populate('items.brand');
+      const rs: IPayment[] = await this.model.find(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
       data = rs;
       return { data, error: '' };
     } catch (error) {
@@ -83,7 +83,7 @@ export class PaymentModel extends Model<IPayment> {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('user').populate('items.product').populate('items.brand');
+      const r: any = await this.model.findOne(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
       data = r._doc; 
       return { data, error: '' };
     } catch (error) {

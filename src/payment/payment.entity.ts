@@ -3,6 +3,7 @@ import mongoose from '../db';
 import { IBrand } from '../brand/brand.entity';
 import { IProduct } from '../product/product.entity';
 import { IUser } from '../user/user.entity';
+import { IQrcode } from '../qrcode/qrcode.entity';
 
 const { Schema } = mongoose;
 
@@ -37,6 +38,7 @@ export interface IPayment extends Document {
   total: number,
   status: string,
   user: IUser | string,
+  qrcode: IQrcode | string,
   createUTC: Date,
   updateUTC?: Date,
 }
@@ -72,6 +74,7 @@ const PaymentSchema = new Schema({
   total: Number,
   status: String,
   user: { type: Schema.Types.ObjectId, ref: 'User' },
+  qrcode: { type: Schema.Types.ObjectId, ref: 'Qrcode' },
   createUTC: { type: Date, default: new Date() },
   updateUTC: Date,
 })
