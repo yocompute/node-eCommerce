@@ -69,7 +69,7 @@ const OrderItemSchema = new Schema({
 const OrderSchema = new Schema({
   items: [OrderItemSchema],
   note: String,
-  sutTotal: Number,
+  subTotal: Number,
   saleTax: Number,
   total: Number,
   status: String,

@@ -21,7 +21,9 @@ export class PaymentModel extends Model<IPayment> {
       subTotal += it.subTotal;
       saleTax += it.saleTax;
     });
-    total = subTotal + saleTax;
+    subTotal = Math.round(subTotal * 100) / 100;
+    saleTax = Math.round(saleTax * 100) / 100;
+    total = Math.round((subTotal + saleTax) * 100) / 100;
     return {subTotal, saleTax, total};
   }
 
@@ -51,7 +53,7 @@ export class PaymentModel extends Model<IPayment> {
 
         const summary = this.getSummary(orderItems);
 
-        const order: IOrder = {...entity, payment: data._id, ...summary, brand: brandId, items: orderItems};
+        const order: IOrder = {...entity, payment: data._id, brand: brandId, items: orderItems, ...summary,};
         await orderModel.insertOne(order);
       }
       
