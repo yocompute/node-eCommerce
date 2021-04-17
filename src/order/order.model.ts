@@ -16,8 +16,8 @@ export class OrderModel extends Model<IOrder> {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IOrder[] = await this.model.find(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
-      data = rs;
+      const rs: any[] = await this.model.find(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
+      data = rs.map(r => r._doc);
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

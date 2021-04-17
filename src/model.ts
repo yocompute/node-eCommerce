@@ -48,9 +48,8 @@ export class Model<T extends Document> {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: T[] = await this.model.find(query);
-
-      data = rs;
+      const rs: any[] = await this.model.find(query);
+      data = rs.map(r => r._doc);
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
