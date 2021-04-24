@@ -16,7 +16,7 @@ export class OrderModel extends Model<IOrder> {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: any[] = await this.model.find(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
+      const rs: any[] = await this.model.find(query).populate('user').populate('brand').populate('qrcode').populate('items.product').populate('items.brand');
       data = rs.map(r => r._doc);
       return { data, error: '' };
     } catch (error) {
@@ -30,7 +30,7 @@ export class OrderModel extends Model<IOrder> {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
+      const r: any = await this.model.findOne(query).populate('user').populate('brand').populate('qrcode').populate('items.product').populate('items.brand');
       data = r._doc; 
       return { data, error: '' };
     } catch (error) {
