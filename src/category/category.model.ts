@@ -12,13 +12,11 @@ export class CategoryModel extends Model<ICategory> {
 
 
   async find(query: core.Query): Promise<IModelResult<ICategory[]>> {
-    let data: ICategory[] = [];
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: ICategory[] = await this.model.find(query).populate('brand');
-      data = rs;
+      const data: ICategory[] = await this.model.find(query).populate('brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
@@ -26,13 +24,11 @@ export class CategoryModel extends Model<ICategory> {
   }
 
   async findOne(query: core.Query): Promise<IModelResult<ICategory>> {
-    let data: ICategory;
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('brand');
-      data = r._doc; 
+      const data: ICategory = await this.model.findOne(query).populate('brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

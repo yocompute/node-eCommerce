@@ -5,6 +5,9 @@ import { IModelResult } from "../model";
 import { IOrder, IOrderItem } from '../order/order.entity';
 import { IBrand } from '../brand/brand.entity';
 import { OrderModel } from '../order/order.model';
+import { PaymentStatus, SYSTEM_ID } from '../const';
+import { TransactionModel } from '../transaction/transaction.model';
+import { String } from 'aws-sdk/clients/acm';
 
 
 export class PaymentModel extends Model<IPayment> {
@@ -32,8 +35,8 @@ export class PaymentModel extends Model<IPayment> {
    * payment ---- object with _id
    */
   getOrders(payment: IPayment): IOrder[] {
-    const items: IPaymentItem[] = payment.items.map((it: any) => it._doc);
-    const brandMap: Map<string | IBrand, IOrderItem[]> = new Map();
+    const items: IPaymentItem[] = payment.items;
+    const brandMap: Map<string, IOrderItem[]> = new Map();
     const orders: IOrder[] = [];
     
     items.forEach(item => brandMap.set(item.brand.toString(), []));
@@ -46,7 +49,7 @@ export class PaymentModel extends Model<IPayment> {
       }
     });
     
-    const brandIds: any[] = [...brandMap.keys()];
+    const brandIds: string[] = [...brandMap.keys()];
     for(let i = 0; i<brandIds.length; i++){
       const brandId = brandIds[i];
       const orderItems: IOrderItem[] = brandMap.get(brandId)!;
@@ -60,7 +63,7 @@ export class PaymentModel extends Model<IPayment> {
     return orders;
   }
 
-
+  
   async insertOne(entity: any): Promise<IModelResult<IPayment>> {
     const orderModel: OrderModel = new OrderModel({});
     try {
@@ -82,13 +85,16 @@ export class PaymentModel extends Model<IPayment> {
 
 
   async updateOne(query: any, updates: any): Promise<IModelResult<IPayment>> {
-    let data: IPayment;
     const orderModel: OrderModel = new OrderModel({});
+    const trModel: TransactionModel = new TransactionModel({});
     try {
+      const r1: any  = await this.model.findOne(query);
+      const oldPayment: IPayment = r1._doc;
+
       // update payment
       await this.model.updateOne(query, updates);
-      const r: any  = await this.model.findOne(query);
-      const payment: IPayment = r._doc;
+      const r: IModelResult<IPayment> = await this.findOneRaw(query);
+      const payment: IPayment = r.data!;
       const orderUpdates = this.getOrders(payment);
       
       const ret = await orderModel.find({payment: payment._id});
@@ -97,25 +103,42 @@ export class PaymentModel extends Model<IPayment> {
       if(orders){
         for(let i = 0; i<orders.length; i++){
           const order = orders[i];
-          const data = orderUpdates.find(it => it.brand === order.brand.toString());
+          const data = orderUpdates.find(it => it.brand === order.brand);
           await orderModel.updateOne({_id: orders[i]._id}, data);
         }
       }
       
+      // insert transaction
+      if(oldPayment.status === PaymentStatus.NEW && payment.status === PaymentStatus.PAID){
+        // insert transactions
+        const tr = {from: payment.user._id, to: SYSTEM_ID, by: SYSTEM_ID, amount: payment.total, note: 'Client Pay' };
+        await trModel.insertOne(tr);
+      }
       return { data: payment, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);
     }
   }
 
-  async find(query: core.Query): Promise<IModelResult<IPayment[]>> {
-    let data: IPayment[] = [];
+  async findOneRaw(query: core.Query): Promise<IModelResult<IPayment>> {
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IPayment[] = await this.model.find(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
-      data = rs;
+      const data: IPayment = await this.model.findOne(query).lean();
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+  async find(query: core.Query): Promise<IModelResult<IPayment[]>> {
+    try {
+      if (query) {
+        query = this.convertIds(query);
+      }
+      const data: IPayment[] = await this.model.find(query).populate('user').populate('qrcode').
+        populate('items.product').populate('items.brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
@@ -123,13 +146,12 @@ export class PaymentModel extends Model<IPayment> {
   }
 
   async findOne(query: core.Query): Promise<IModelResult<IPayment>> {
-    let data: IPayment;
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('user').populate('qrcode').populate('items.product').populate('items.brand');
-      data = r._doc; 
+      const data: IPayment = await this.model.findOne(query).populate('user').populate('qrcode').
+        populate('items.product').populate('items.brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

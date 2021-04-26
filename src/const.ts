@@ -5,3 +5,10 @@ export const Role = {
     Driver: "Driver",
     Guest: "Guest"
 }
+
+export const PaymentStatus = {
+    NEW: 'N',
+    PAID: 'P'
+}
+
+export const SYSTEM_ID = process.env.SYSTEM_ID;

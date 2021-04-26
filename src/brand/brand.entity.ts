@@ -13,7 +13,7 @@ export interface IBusinessHour{
 }
 
 export interface IBrand extends Document{
-    _id?: string | Object,
+    _id: string | Object,
     name: string,
     description: string,
     pictures: IPicture[],

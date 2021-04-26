@@ -48,7 +48,7 @@ export const UploaderModel = {
     return new Promise((resolve) => {
       s3.upload(params, (error: Error, data: AWS.S3.ManagedUpload.SendData) => {
         if (error) {
-          resolve({ error: error.message, data: null });
+          resolve({ error: error.message });
         } else {
           const pic: IPicture = { url: data.Location, name: data.Key };
           resolve({ error: null, data: pic });
