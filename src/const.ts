@@ -12,3 +12,9 @@ export const PaymentStatus = {
 }
 
 export const SYSTEM_ID = process.env.SYSTEM_ID;
+
+export const TransactionType = {
+    ClientPay: "Client Pay",
+    ClientPlaceOrder: "Client Place Order",
+    Payout: "Payout"
+}

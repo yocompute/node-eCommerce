@@ -3,11 +3,9 @@ import { IModelParams, Model } from "../model";
 import { IPayment, IPaymentItem, Payment } from "./payment.entity";
 import { IModelResult } from "../model";
 import { IOrder, IOrderItem } from '../order/order.entity';
-import { IBrand } from '../brand/brand.entity';
 import { OrderModel } from '../order/order.model';
-import { PaymentStatus, SYSTEM_ID } from '../const';
+import { PaymentStatus, SYSTEM_ID, TransactionType } from '../const';
 import { TransactionModel } from '../transaction/transaction.model';
-import { String } from 'aws-sdk/clients/acm';
 
 
 export class PaymentModel extends Model<IPayment> {
@@ -69,7 +67,8 @@ export class PaymentModel extends Model<IPayment> {
     try {
       // save payment
       const r: any = await this.model.create(entity);
-      const data: IPayment = r._doc;
+      const r1: IModelResult<IPayment> = await this.findOneRaw({_id: r._id});
+      const data: any = r1.data;
 
       const orders = this.getOrders(data);
       
@@ -95,23 +94,23 @@ export class PaymentModel extends Model<IPayment> {
       await this.model.updateOne(query, updates);
       const r: IModelResult<IPayment> = await this.findOneRaw(query);
       const payment: IPayment = r.data!;
-      const orderUpdates = this.getOrders(payment);
+      const orderUpdates: IOrder[] = this.getOrders(payment);
       
-      const ret = await orderModel.find({payment: payment._id});
+      const ret = await orderModel.findRaw({payment: payment._id});
       const orders = ret.data;
 
       if(orders){
         for(let i = 0; i<orders.length; i++){
-          const order = orders[i];
-          const data = orderUpdates.find(it => it.brand === order.brand);
-          await orderModel.updateOne({_id: orders[i]._id}, data);
+          const order: IOrder = orders[i];
+          const data = orderUpdates.find(it => it.brand.toString() === order.brand.toString());
+          await orderModel.updateOne({_id: order._id}, data);
         }
       }
       
       // insert transaction
       if(oldPayment.status === PaymentStatus.NEW && payment.status === PaymentStatus.PAID){
         // insert transactions
-        const tr = {from: payment.user._id, to: SYSTEM_ID, by: SYSTEM_ID, amount: payment.total, note: 'Client Pay' };
+        const tr = {from: payment.user._id, to: SYSTEM_ID, by: SYSTEM_ID, amount: payment.total, type: TransactionType.ClientPay, note: 'Client Pay' };
         await trModel.insertOne(tr);
       }
       return { data: payment, error: '' };

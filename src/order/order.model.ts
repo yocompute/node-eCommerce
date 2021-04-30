@@ -3,7 +3,7 @@ import { IModelParams, Model } from "../model";
 import { IOrder, Order } from "./order.entity";
 import { IModelResult } from "../model";
 import { TransactionModel } from "../transaction/transaction.model";
-import { SYSTEM_ID } from "../const";
+import { SYSTEM_ID, TransactionType } from "../const";
 
 export class OrderModel extends Model<IOrder> {
   constructor(params: IModelParams) {
@@ -20,12 +20,36 @@ export class OrderModel extends Model<IOrder> {
       const r1 = await this.findOne({_id: r._id});
       const order: any = r1.data;
       const ownerId = order.brand.owner;
-      const tr = {from: ownerId, to: entity.user, by: SYSTEM_ID, amount: entity.total, note: 'Place Order' };
+      const tr = {from: ownerId, to: entity.user, by: SYSTEM_ID, amount: entity.total, type: TransactionType.ClientPlaceOrder, note: 'Place Order' };
       await trModel.insertOne(tr);
       
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);
+    }
+  }
+
+  async findRaw(query: core.Query): Promise<IModelResult<IOrder[]>> {
+    try {
+      if (query) {
+        query = this.convertIds(query);
+      }
+      const data: IOrder[] = await this.model.find(query).lean();
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+  
+  async findOneRaw(query: core.Query): Promise<IModelResult<IOrder>> {
+    try {
+      if (query) {
+        query = this.convertIds(query);
+      }
+      const data: IOrder = await this.model.findOne(query).lean();
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`${error}`);
     }
   }
 
