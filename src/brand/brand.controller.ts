@@ -58,7 +58,7 @@ export class BrandController extends Controller<IBrand> {
                 await this.brandModel.updateOne({ _id: brandId }, brand);
             } catch (e) {
                 console.error(e);
-                return { error: e, data: null };
+                return { error: e };
             }
         }
 

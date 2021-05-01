@@ -26,10 +26,10 @@ export class AuthModel extends Model<IAuth> {
                     // delete data.password;
                     return { data, error: null};
                 }else{
-                    return { data: null, error: 'Authentication Failed'};
+                    return { error: 'Authentication Failed'};
                 }
             } else {
-                return { data: null, error: 'Invalid token'};
+                return { error: 'Invalid token'};
             }
         } catch (error) {
             throw new Error(`Authentication exception: ${error}`);
@@ -45,10 +45,10 @@ export class AuthModel extends Model<IAuth> {
                 if(athenticated){
                     return { data: jwt.sign(data.user.toString(), JWT_SECRET), error: null};
                 }else{
-                    return { data: null, error: 'Authentication Failed'};
+                    return { error: 'Authentication Failed' };
                 }
             }else{
-                return { data: null, error: 'Authentication Failed'};
+                return { error: 'Authentication Failed' };
 
             }
         } catch (error) {
@@ -56,24 +56,23 @@ export class AuthModel extends Model<IAuth> {
         }
     }
 
-    async signup(email: string, username: string, password: string): Promise<IModelResult<string>> {
+    async signup(email: string, username: string, password: string, roles: string[]): Promise<IModelResult<string>> {
         let tokenId = '';
         let error = '';
         const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
         try {
-            // const authRepo = this.connection.getRepository(this.entity);
-            // const userRepo = this.connection.getRepository(User);
 
             const {data} = await this.find({ email });
 
             if (data && data.length > 0) { // duplicated email
-                return { data: null, error: 'The email was already registered.'}
+                return { error: 'The email was already registered.'}
             } else {
                 await this.userModel.insertOne({
                     username,
                     email,
                     balance: 0,
+                    roles,
                     createUTC: new Date()
                 });
 

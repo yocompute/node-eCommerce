@@ -3,10 +3,9 @@ import { IModelParams, Model } from "../model";
 import { IPayment, IPaymentItem, Payment } from "./payment.entity";
 import { IModelResult } from "../model";
 import { IOrder, IOrderItem } from '../order/order.entity';
-import { IBrand } from '../brand/brand.entity';
 import { OrderModel } from '../order/order.model';
-import { ProductModel } from '../product/product.model';
-import { IProduct } from '../product/product.entity';
+import { PaymentStatus, SYSTEM_ID, TransactionType } from '../const';
+import { TransactionModel } from '../transaction/transaction.model';
 
 
 export class PaymentModel extends Model<IPayment> {
@@ -14,48 +13,69 @@ export class PaymentModel extends Model<IPayment> {
     super(Payment, params);
   }
   
-  getTotal(items: any[], products: any[]){
+  getSummary(items: IOrderItem[]){
+    let subTotal = 0;
+    let saleTax = 0;
     let total = 0;
-    let cost = 0;
     
-    items.forEach((item: any) => {
-      const r = products.find(p => p._doc._id.toString() === item.product);
-      if(r._doc){
-        const p = r._doc;
-        total += p.price * item.quantity * (100 + p.saleTaxRate) / 100;
-        cost += p.cost * item.quantity;
-      }
+    items.forEach((it: IOrderItem) => {
+      subTotal += it.subTotal;
+      saleTax += it.saleTax;
     });
-    return {total, cost};
+    subTotal = Math.round(subTotal * 100) / 100;
+    saleTax = Math.round(saleTax * 100) / 100;
+    total = Math.round((subTotal + saleTax) * 100) / 100;
+    return {subTotal, saleTax, total};
   }
 
+  /**
+   * Split payment into orders by brand
+   * payment ---- object with _id
+   */
+  getOrders(payment: IPayment): IOrder[] {
+    const items: IPaymentItem[] = payment.items;
+    const brandMap: Map<string, IOrderItem[]> = new Map();
+    const orders: IOrder[] = [];
+    
+    items.forEach(item => brandMap.set(item.brand.toString(), []));
+    items.forEach(item => {
+      const arry: IOrderItem[] = brandMap.get(item.brand.toString())!;
+      if(arry){
+        const orderItem: any = {...item};
+        delete orderItem._id;
+        delete orderItem.brand;
+        arry.push(orderItem);
+      }
+    });
+    
+    const brandIds: string[] = [...brandMap.keys()];
+    for(let i = 0; i<brandIds.length; i++){
+      const brandId = brandIds[i];
+      const orderItems: IOrderItem[] = brandMap.get(brandId)!;
+
+      const summary = this.getSummary(orderItems);
+      const data = { ...payment };
+      delete data._id;
+      const order: any = {...data, payment: payment._id, brand: brandId, items: orderItems, ...summary};
+      orders.push(order);
+    }
+    return orders;
+  }
+
+  
+
   async insertOne(entity: any): Promise<IModelResult<IPayment>> {
-    let data: IPayment;
     const orderModel: OrderModel = new OrderModel({});
-    const productModel: ProductModel = new ProductModel({});
     try {
       // save payment
       const r: any = await this.model.create(entity);
-      data = r._doc;
+      const r1: IModelResult<IPayment> = await this.findOneRaw({_id: r._id});
+      const data: any = r1.data;
 
-      const ps: IModelResult<IProduct[]> = await productModel.find({})!;
-      const items: IPaymentItem[] = entity.items;
-      const brandMap: Map<string | IBrand, IOrderItem[]> = new Map();
-      items.forEach(item => brandMap.set(item.brand, []));
-      items.forEach(item => {
-        const arry: IOrderItem[] = brandMap.get(item.brand)!;
-        if(arry){
-          arry.push({product: item.product, quantity: item.quantity});
-        }
-      });
-      const brandIds: any[] = [...brandMap.keys()];
-      for(let i = 0; i<brandIds.length; i++){
-        const brandId = brandIds[i];
-        const orderItems: IOrderItem[] = brandMap.get(brandId)!;
-
-        const {total, cost} = this.getTotal(orderItems, ps.data!);
-        const order: IOrder = {...entity, payment: data._id, total, cost, brand: brandId, items: orderItems};
-        await orderModel.insertOne(order);
+      const orders = this.getOrders(data);
+      
+      for(let i = 0; i<orders.length; i++){
+        await orderModel.insertOne(orders[i]);
       }
       
       return { data, error: '' };
@@ -64,14 +84,63 @@ export class PaymentModel extends Model<IPayment> {
     }
   }
 
-  async find(query: core.Query): Promise<IModelResult<IPayment[]>> {
-    let data: IPayment[] = [];
+
+  async updateOne(query: any, updates: any): Promise<IModelResult<IPayment>> {
+    const orderModel: OrderModel = new OrderModel({});
+    const trModel: TransactionModel = new TransactionModel({});
+    try {
+      const r1: any  = await this.model.findOne(query);
+      const oldPayment: IPayment = r1._doc;
+
+      // update payment
+      delete updates._id;
+      await this.model.updateOne(query, updates);
+      const r: IModelResult<IPayment> = await this.findOneRaw(query);
+      const payment: IPayment = r.data!;
+      const orderUpdates: IOrder[] = this.getOrders(payment);
+      
+      const ret = await orderModel.findRaw({payment: payment._id});
+      const orders = ret.data;
+
+      if(orders){
+        for(let i = 0; i<orders.length; i++){
+          const order: IOrder = orders[i];
+          const data = orderUpdates.find(it => it.brand.toString() === order.brand.toString());
+          await orderModel.updateOne({_id: order._id}, data);
+        }
+      }
+      
+      // insert transaction
+      if(oldPayment.status === PaymentStatus.NEW && payment.status === PaymentStatus.PAID){
+        // insert transactions
+        const tr = {from: payment.user._id, to: SYSTEM_ID, by: SYSTEM_ID, amount: payment.total, type: TransactionType.ClientPay, note: 'Client Pay' };
+        await trModel.insertOne(tr);
+      }
+      return { data: payment, error: '' };
+    } catch (error) {
+      throw new Error(`Exception: ${error}`);
+    }
+  }
+
+  async findOneRaw(query: core.Query): Promise<IModelResult<IPayment>> {
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IPayment[] = await this.model.find(query).populate('user').populate('items.product').populate('items.brand');
-      data = rs;
+      const data: IPayment = await this.model.findOne(query).lean();
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+  async find(query: core.Query): Promise<IModelResult<IPayment[]>> {
+    try {
+      if (query) {
+        query = this.convertIds(query);
+      }
+      const data: IPayment[] = await this.model.find(query).populate('user').populate('qrcode').
+        populate('items.product').populate('items.brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
@@ -79,13 +148,12 @@ export class PaymentModel extends Model<IPayment> {
   }
 
   async findOne(query: core.Query): Promise<IModelResult<IPayment>> {
-    let data: IPayment;
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('user').populate('items.product').populate('items.brand');
-      data = r._doc; 
+      const data: IPayment = await this.model.findOne(query).populate('user').populate('qrcode').
+        populate('items.product').populate('items.brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

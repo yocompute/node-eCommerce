@@ -13,11 +13,16 @@ export interface IBusinessHour{
 }
 
 export interface IBrand extends Document{
+    _id: string,
     name: string,
     description: string,
     pictures: IPicture[],
     status: string,
     owner: IUser | string,
+    taxNumber: string,
+    street: string,
+    city: string,
+    phoneNumber: string,
     deliverMethods: string[],
     maxDeliverDistance: number,
     minConsumption: number,
@@ -37,6 +42,10 @@ const BrandSchema = new Schema({
     description: String,
     pictures: [PictureSchema],
     status: String,
+    taxNumber: String,
+    street: String,
+    city: String,
+    phoneNumber: String,
     deliverMethods: [String],
     maxDeliverDistance: Number,
     minConsumption: Number,

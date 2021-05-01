@@ -13,7 +13,7 @@ export interface IAuth extends Document{
 }
 
 const AuthSchema = new Schema({
-    _id: {type: Types.ObjectId, default: new Types.ObjectId()},
+    // _id: {type: Types.ObjectId, default: new Types.ObjectId()},
     email: String,
     password: String,
     phone: String,
