@@ -42,6 +42,7 @@ export class PaymentModel extends Model<IPayment> {
       const arry: IOrderItem[] = brandMap.get(item.brand.toString())!;
       if(arry){
         const orderItem: any = {...item};
+        delete orderItem._id;
         delete orderItem.brand;
         arry.push(orderItem);
       }
@@ -62,6 +63,7 @@ export class PaymentModel extends Model<IPayment> {
   }
 
   
+
   async insertOne(entity: any): Promise<IModelResult<IPayment>> {
     const orderModel: OrderModel = new OrderModel({});
     try {
@@ -91,6 +93,7 @@ export class PaymentModel extends Model<IPayment> {
       const oldPayment: IPayment = r1._doc;
 
       // update payment
+      delete updates._id;
       await this.model.updateOne(query, updates);
       const r: IModelResult<IPayment> = await this.findOneRaw(query);
       const payment: IPayment = r.data!;

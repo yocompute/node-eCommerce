@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import logger from "./logger";
 
 dotenv.config();
 
@@ -10,8 +11,11 @@ const DB_AUTH_SOURCE = process.env.DB_AUTH_SOURCE;
 
 const CONNECTION_STR = DB_USERNAME ? `mongodb://${DB_USERNAME}:${DB_PASSWORD}@127.0.0.1:27017/${DB_NAME}?authSource=${DB_AUTH_SOURCE}`
     : `mongodb://127.0.0.1:27017/${DB_NAME}`;
-
-mongoose.connect(CONNECTION_STR, {useNewUrlParser: true, useUnifiedTopology: true});
+try{
+    mongoose.connect(CONNECTION_STR, {useNewUrlParser: true, useUnifiedTopology: true});
+}catch(error){
+    logger.error(`${error}`);
+}
 
 export default mongoose;
 
