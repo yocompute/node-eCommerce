@@ -9,7 +9,7 @@ import { IQrcode } from '../qrcode/qrcode.entity';
 const { Schema } = mongoose;
 
 export interface IOrderItemAddition {
-  product: IProduct | string,
+  product: IProduct,
   name: string,
   price: number,
   cost: number,
@@ -19,7 +19,7 @@ export interface IOrderItemAddition {
 }
 
 export interface IOrderItem {
-  product: IProduct | string,
+  product: IProduct,
   price: number,
   cost: number,
   saleTaxRate: number,
@@ -37,10 +37,10 @@ export interface IOrder extends Document {
   saleTax: number,
   total: number,
   status: string,
-  brand: IBrand | string,
-  user: IUser | string,
-  qrcode: IQrcode | string,
-  payment: IPayment | string,
+  brand: IBrand,
+  user: IUser,
+  qrcode: IQrcode,
+  payment: IPayment,
   createUTC: Date,
   updateUTC?: Date,
 }

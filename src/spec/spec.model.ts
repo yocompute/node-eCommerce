@@ -12,13 +12,11 @@ export class SpecModel extends Model<ISpec> {
 
 
   async find(query: core.Query): Promise<IModelResult<ISpec[]>> {
-    let data: ISpec[] = [];
     try {
       if(query){
         query = this.convertIds(query);
       }
-      const rs: ISpec[] = await this.model.find(query).populate('brand');
-      data = rs;
+      const data: ISpec[] = await this.model.find(query).populate('brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
@@ -26,14 +24,11 @@ export class SpecModel extends Model<ISpec> {
   }
 
   async findOne(query: core.Query): Promise<IModelResult<ISpec>> {
-    let data: ISpec;
     try {
       if(query){
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('brand');
-
-      data = r._doc; 
+      const data: ISpec = await this.model.findOne(query).populate('brand').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

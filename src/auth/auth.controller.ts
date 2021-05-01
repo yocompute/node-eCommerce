@@ -6,6 +6,7 @@ import { IModelResult } from "../model";
 import { IUser } from "../user/user.entity";
 import { IAuth } from "./auth.entity";
 import { AuthModel } from "./auth.model";
+import logger from "../logger";
 
 export class AuthController extends Controller<IAuth> {
     brandModel: BrandModel = new BrandModel({});
@@ -26,6 +27,7 @@ export class AuthController extends Controller<IAuth> {
                     res.status(403).send(r);
                 }
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send({data: null, error: error.message});
             }
         } else {
@@ -45,6 +47,7 @@ export class AuthController extends Controller<IAuth> {
                     res.status(403).send(r);
                 }
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send({error: error.message});
             }
         } else {
@@ -61,6 +64,7 @@ export class AuthController extends Controller<IAuth> {
                 const r = await (<AuthModel>this.model).signup(d.email, d.username, d.password, roles);
                 res.status(200).send(r);
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send(error);
             }
         } else {
@@ -94,6 +98,7 @@ export class AuthController extends Controller<IAuth> {
                     res.status(409).send(r); // Conflict
                 }
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send(error);
             }
         } else {

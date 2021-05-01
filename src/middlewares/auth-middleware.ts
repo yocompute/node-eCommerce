@@ -5,6 +5,7 @@ import { IModelResult } from "../model";
 import { IUser } from "../user/user.entity";
 import { UserModel } from "../user/user.model";
 import { cfg } from "../config";
+import logger from "../logger";
 
 const SVC_PATH = process.env.ENV === 'local' ? cfg.SVC_PATH : '';
 const paths = [
@@ -41,8 +42,9 @@ export const AuthMiddleWare = async function(req: Request, res: Response, next: 
                 } else {
                     res.status(401).send({ error: "Authorization failed: Invalid token" });
                 }
-            } catch (err) {
-                res.status(401).send({ error: `Authorization failed: ${err}` });
+            } catch (error) {
+                logger.error(`${error}`);
+                res.status(401).send({ error: `Authorization failed: ${error}` });
             }
         } else {
             res.status(401).send({ error: "Authorization token is required." });

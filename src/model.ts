@@ -10,7 +10,7 @@ export interface IModelParams {
 }
 
 export interface IModelResult<T> {
-  data: T | null,
+  data?: T,
   error: string | null
 }
 
@@ -43,13 +43,11 @@ export class Model<T extends Document> {
    * @param query 
    */
   async find(query: FilterQuery<any>): Promise<IModelResult<T[]>> {
-    let data: T[] = [];
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: any[] = await this.model.find(query);
-      data = rs.map(r => r._doc);
+      const data: T[] = await this.model.find(query).lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
@@ -61,13 +59,11 @@ export class Model<T extends Document> {
    * @param query 
    */
   async findOne(query: FilterQuery<any>): Promise<IModelResult<T>> {
-    let data: T;
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query);
-      data = r._doc;
+      const data: T = await this.model.findOne(query).lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);

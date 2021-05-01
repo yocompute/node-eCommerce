@@ -4,6 +4,7 @@ import * as core from 'express-serve-static-core';
 import SSE from "express-sse-ts";
 // import { Connection, Repository, EntityTarget, FindManyOptions } from "typeorm";
 import { IModelResult, Model } from './model';
+import logger from "./logger";
 
 export const Code = {
     SUCCESS: 'success',
@@ -55,6 +56,7 @@ export class Controller<T extends Document> {
                 res.status(403).send(r);
             }
         }catch(error){
+            logger.error(`${error}`);
             res.status(500).send({error: error.message});
         }
     }
@@ -71,6 +73,7 @@ export class Controller<T extends Document> {
                     res.status(403).send(r);
                 }
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send({error: error.message});
             }
         } else {
@@ -93,6 +96,7 @@ export class Controller<T extends Document> {
                     res.status(403).send(r);
                 }
             }catch(error){
+                logger.error(`${error}`);
                 res.status(500).send({error: error.message});
             }
         } else {

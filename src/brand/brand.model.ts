@@ -12,15 +12,11 @@ export class BrandModel extends Model<IBrand> {
 
 
   async find(query: core.Query): Promise<IModelResult<IBrand[]>> {
-    let data: IBrand[] = [];
-
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const rs: IBrand[] = await this.model.find(query).populate('owner');
-
-      data = rs;
+      const data: IBrand[] = await this.model.find(query).populate('owner').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);
@@ -28,15 +24,11 @@ export class BrandModel extends Model<IBrand> {
   }
 
   async findOne(query: core.Query): Promise<IModelResult<IBrand>> {
-    let data: IBrand;
-
     try {
       if (query) {
         query = this.convertIds(query);
       }
-      const r: any = await this.model.findOne(query).populate('owner');
-
-      data = r._doc; 
+      const data: IBrand = await this.model.findOne(query).populate('owner').lean();
       return { data, error: '' };
     } catch (error) {
       throw new Error(`Exception: ${error}`);
