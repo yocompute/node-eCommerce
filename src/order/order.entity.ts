@@ -19,7 +19,9 @@ export interface IOrderItemAddition {
 }
 
 export interface IOrderItem {
+  _id: string,
   product: IProduct,
+  brand: IBrand,
   price: number,
   cost: number,
   saleTaxRate: number,
@@ -45,7 +47,6 @@ export interface IOrder extends Document {
   updateUTC?: Date,
 }
 
-
 const OrderItemAdditionSchema = new Schema({
   product: { type: Schema.Types.ObjectId, ref: 'Product' },
   name: String,
@@ -56,8 +57,9 @@ const OrderItemAdditionSchema = new Schema({
   quantity: Number
 })
 
-const OrderItemSchema = new Schema({
+export const OrderItemSchema = new Schema({
   product: { type: Schema.Types.ObjectId, ref: 'Product' },
+  brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
   price: Number,
   cost: Number,
   saleTaxRate: Number,
