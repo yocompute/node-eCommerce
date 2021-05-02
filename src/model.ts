@@ -2,6 +2,7 @@ import { Model as MongooseModel, Document, FilterQuery, Query } from 'mongoose';
 import SSE from "express-sse-ts";
 import { ObjectID } from "mongodb";
 import mongoose from './db';
+import { Status } from './const';
 const { Types } = mongoose;
 
 export interface IModelParams {
@@ -85,6 +86,20 @@ export class Model<T extends Document> {
 
   async updateOne(query: FilterQuery<any>, updates: any): Promise<IModelResult<T>> {
     let data: T;
+    try {
+      await this.model.updateOne(query, updates);
+      const r: any = await this.model.findOne(query);
+      data = r._doc;
+      return { data, error: '' };
+    } catch (error) {
+      throw new Error(`Exception: ${error}`);
+    }
+  }
+
+  
+  async deleteOne(query: FilterQuery<any>): Promise<IModelResult<T>> {
+    let data: T;
+    const updates: any = { status: Status.Cancelled, updateUTC: new Date() };
     try {
       await this.model.updateOne(query, updates);
       const r: any = await this.model.findOne(query);

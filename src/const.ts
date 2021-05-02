@@ -6,9 +6,21 @@ export const Role = {
     Guest: "Guest"
 }
 
+export const Status = {
+    New: 'N',
+    Cancelled: 'C',
+}
+
 export const PaymentStatus = {
-    NEW: 'N',
-    PAID: 'P'
+    New: 'N',
+    Paid: 'P',
+    Cancelled: 'C'
+}
+
+export const OrderStatus = {
+    New: 'N',
+    Paid: 'P',
+    Cancelled: 'C'
 }
 
 export const SYSTEM_ID = process.env.SYSTEM_ID;

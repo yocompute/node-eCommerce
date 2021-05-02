@@ -104,6 +104,27 @@ export class Controller<T extends Document> {
         }
     }
 
+    async deleteOne(req: Request, res: Response): Promise<void> {
+        const id = req.params.id;
+
+        res.setHeader("Content-Type", "application/json");
+        if (id) {
+            try {
+                const r: IModelResult<T>  = await this.model.deleteOne({ _id: id });
+                if(r.data){
+                    res.status(200).send(r);
+                }else{
+                    res.status(403).send(r);
+                }
+            }catch(error){
+                logger.error(`${error}`);
+                res.status(500).send({error: error.message});
+            }
+        } else {
+            res.status(400).send({error: 'No data in request'});
+        }
+    }
+
     // /**
     //  * 
     //  * @param req 

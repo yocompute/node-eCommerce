@@ -1,11 +1,10 @@
 import * as core from 'express-serve-static-core';
-import { IModelParams, Model } from "../model";
-import { IPayment, IPaymentItem, Payment } from "./payment.entity";
-import { IModelResult } from "../model";
+import { IModelResult, IModelParams, Model } from "../model";
+import { IPayment, Payment } from "./payment.entity";
 import { IOrder, IOrderItem } from '../order/order.entity';
 import { OrderModel } from '../order/order.model';
-import { PaymentStatus, SYSTEM_ID, TransactionType } from '../const';
 import { TransactionModel } from '../transaction/transaction.model';
+import { PaymentStatus, SYSTEM_ID, TransactionType } from '../const';
 
 
 export class PaymentModel extends Model<IPayment> {
@@ -30,10 +29,10 @@ export class PaymentModel extends Model<IPayment> {
 
   /**
    * Split payment into orders by brand
-   * payment ---- object with _id
+   * payment ---- raw db object without populated fields
    */
   getOrders(payment: IPayment): IOrder[] {
-    const items: IPaymentItem[] = payment.items;
+    const items: IOrderItem[] = payment.items;
     const brandMap: Map<string, IOrderItem[]> = new Map();
     const orders: IOrder[] = [];
     
@@ -41,10 +40,7 @@ export class PaymentModel extends Model<IPayment> {
     items.forEach(item => {
       const arry: IOrderItem[] = brandMap.get(item.brand.toString())!;
       if(arry){
-        const orderItem: any = {...item};
-        delete orderItem._id;
-        delete orderItem.brand;
-        arry.push(orderItem);
+        arry.push(item);
       }
     });
     
@@ -62,16 +58,11 @@ export class PaymentModel extends Model<IPayment> {
     return orders;
   }
 
-  
-
   async insertOne(entity: any): Promise<IModelResult<IPayment>> {
     const orderModel: OrderModel = new OrderModel({});
     try {
-      // save payment
       const r: any = await this.model.create(entity);
-      const r1: IModelResult<IPayment> = await this.findOneRaw({_id: r._id});
-      const data: any = r1.data;
-
+      const data: IPayment = await this.model.findOne({_id: r._id}).lean();
       const orders = this.getOrders(data);
       
       for(let i = 0; i<orders.length; i++){
@@ -84,19 +75,15 @@ export class PaymentModel extends Model<IPayment> {
     }
   }
 
-
   async updateOne(query: any, updates: any): Promise<IModelResult<IPayment>> {
     const orderModel: OrderModel = new OrderModel({});
     const trModel: TransactionModel = new TransactionModel({});
     try {
-      const r1: any  = await this.model.findOne(query);
-      const oldPayment: IPayment = r1._doc;
-
-      // update payment
+      const oldPayment: IPayment = await this.model.findOne(query).lean();
       delete updates._id;
       await this.model.updateOne(query, updates);
-      const r: IModelResult<IPayment> = await this.findOneRaw(query);
-      const payment: IPayment = r.data!;
+
+      const payment: IPayment = await this.model.findOne(query).lean();
       const orderUpdates: IOrder[] = this.getOrders(payment);
       
       const ret = await orderModel.findRaw({payment: payment._id});
@@ -111,7 +98,7 @@ export class PaymentModel extends Model<IPayment> {
       }
       
       // insert transaction
-      if(oldPayment.status === PaymentStatus.NEW && payment.status === PaymentStatus.PAID){
+      if(oldPayment.status === PaymentStatus.New && payment.status === PaymentStatus.Paid){
         // insert transactions
         const tr = {from: payment.user._id, to: SYSTEM_ID, by: SYSTEM_ID, amount: payment.total, type: TransactionType.ClientPay, note: 'Client Pay' };
         await trModel.insertOne(tr);
@@ -157,6 +144,35 @@ export class PaymentModel extends Model<IPayment> {
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
+    }
+  }
+
+  
+  async excludeDeletedItems(originalItems: IOrderItem[], deletedItems: IOrderItem[]){
+    const items: IOrderItem[] = [];
+    originalItems.forEach((it: IOrderItem) => {
+      const orderItem = deletedItems.find(item => item._id.toString() === it._id.toString());
+      if(!orderItem){
+        items.push(it);
+      }
+    });
+    const summary = this.getSummary(items);
+    return {items, summary};
+  }
+
+  async deleteOne(query: core.Query): Promise<IModelResult<IPayment>> {
+    try {
+      const data: IPayment = await this.model.findOne(query).lean();
+
+      if(data.status === PaymentStatus.New){
+        const updates: any = { status: PaymentStatus.Cancelled, updateUTC: new Date() };
+        await this.model.updateOne(query, updates);
+        return { data, error: '' };
+      }else{
+        return {data, error: 'Can not cancel the payment'}
+      }
+    } catch (error) {
+      throw new Error(`Exception: ${error}`);
     }
   }
 }

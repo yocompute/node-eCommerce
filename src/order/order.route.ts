@@ -12,5 +12,6 @@ export function OrderRoute() : Router{
   router.get('/', [parseQuery], (req:Request, res:Response) => { controller.find(req, res); });
   router.post('/', (req:Request, res:Response) => { controller.insertOne(req, res); });
   router.put('/:id', (req:Request, res:Response) => { controller.updateOne(req, res); });
+  router.delete('/:id', (req:Request, res:Response) => { controller.deleteOne(req, res); });
   return router;
 }

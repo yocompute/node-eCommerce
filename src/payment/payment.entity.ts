@@ -4,34 +4,12 @@ import { IBrand } from '../brand/brand.entity';
 import { IProduct } from '../product/product.entity';
 import { IUser } from '../user/user.entity';
 import { IQrcode } from '../qrcode/qrcode.entity';
+import { OrderItemSchema, IOrderItem } from '../order/order.entity';
 
 const { Schema } = mongoose;
 
-export interface IPaymentItemAddition {
-  product: IProduct,
-  name: string,
-  price: number,
-  cost: number,
-  saleTaxRate: number,
-  purchaseTaxRate: number,
-  quantity: number
-}
-
-export interface IPaymentItem {
-  product: IProduct,
-  price: number,
-  cost: number,
-  saleTaxRate: number,
-  purchaseTaxRate: number,
-  brand: IBrand,
-  quantity: number,
-  subTotal: number,
-  saleTax: number,
-  additions: IPaymentItemAddition[],
-}
-
 export interface IPayment extends Document {
-  items: IPaymentItem[],
+  items: IOrderItem[],
   note: string,
   subTotal: number,
   saleTax: number,
@@ -43,31 +21,8 @@ export interface IPayment extends Document {
   updateUTC?: Date,
 }
 
-const PaymentItemAdditionSchema = new Schema({
-  product: { type: Schema.Types.ObjectId, ref: 'Product' },
-  name: String,
-  price: Number,
-  cost: Number,
-  saleTaxRate: Number,
-  purchaseTaxRate: Number,
-  quantity: Number
-})
-
-const PaymentItemSchema = new Schema({
-  product: { type: Schema.Types.ObjectId, ref: 'Product' },
-  brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
-  price: Number,
-  cost: Number,
-  saleTaxRate: Number,
-  purchaseTaxRate: Number,
-  quantity: Number,
-  subTotal: Number,
-  saleTax: Number,
-  additions: [PaymentItemAdditionSchema],
-})
-
 const PaymentSchema = new Schema({
-  items: [PaymentItemSchema],
+  items: [OrderItemSchema],
   note: String,
   sutTotal: Number,
   saleTax: Number,

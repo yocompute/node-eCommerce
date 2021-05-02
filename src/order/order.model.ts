@@ -1,9 +1,11 @@
 import * as core from 'express-serve-static-core';
 import { IModelParams, Model } from "../model";
 import { IOrder, Order } from "./order.entity";
+import { IPayment } from "../payment/payment.entity";
 import { IModelResult } from "../model";
+import { PaymentModel } from '../payment/payment.model';
 import { TransactionModel } from "../transaction/transaction.model";
-import { SYSTEM_ID, TransactionType } from "../const";
+import { SYSTEM_ID, TransactionType, OrderStatus } from "../const";
 
 export class OrderModel extends Model<IOrder> {
   constructor(params: IModelParams) {
@@ -76,6 +78,32 @@ export class OrderModel extends Model<IOrder> {
       return { data, error: '' };
     } catch (error) {
       throw new Error(`${error}`);
+    }
+  }
+
+  async deleteOne(query: core.Query): Promise<IModelResult<IOrder>> {
+    try {
+      const data: IOrder = await this.model.findOne(query).lean();
+
+      if(data.status === OrderStatus.New){
+        const updates: any = { status: OrderStatus.Cancelled, updateUTC: new Date() };
+        await this.model.updateOne(query, updates);
+
+        const paymentModel: PaymentModel = new PaymentModel({});
+        const r: IModelResult<IPayment> = await paymentModel.findOneRaw({_id: data.payment.toString()});
+        const payment: IPayment = r.data!;
+        const paymentUpdates: any = await paymentModel.excludeDeletedItems(payment.items, data.items);
+        if(paymentUpdates.items && paymentUpdates.items.length > 0){
+          await paymentModel.updateOne({_id: data.payment.toString()}, paymentUpdates);
+        }else{
+          await paymentModel.deleteOne({_id: data.payment.toString()});
+        }
+        return { data, error: '' };
+      }else{
+        return {data, error: 'Can not cancel the order'}
+      }
+    } catch (error) {
+      throw new Error(`Exception: ${error}`);
     }
   }
 }
