@@ -1,6 +1,6 @@
 import { Model as MongooseModel, Document } from 'mongoose';
 import mongoose from '../db';
-import { IBrand } from '../brand/brand.entity';
+// import { IBrand } from '../brand/brand.entity';
 import { IProduct } from '../product/product.entity';
 import { IUser } from '../user/user.entity';
 import { IPayment } from '../payment/payment.entity';
@@ -21,7 +21,8 @@ export interface IOrderItemAddition {
 export interface IOrderItem {
   _id: string,
   product: IProduct,
-  brand: IBrand,
+  // brand: IBrand,
+  comboId: string,
   price: number,
   cost: number,
   saleTaxRate: number,
@@ -30,6 +31,7 @@ export interface IOrderItem {
   subTotal: number,
   saleTax: number,
   additions: IOrderItemAddition[],
+  type: string,
 }
 
 export interface IOrder extends Document {
@@ -39,7 +41,7 @@ export interface IOrder extends Document {
   saleTax: number,
   total: number,
   status: string,
-  brand: IBrand,
+  // brand: IBrand,
   user: IUser,
   qrcode: IQrcode,
   payment: IPayment,
@@ -59,7 +61,8 @@ const OrderItemAdditionSchema = new Schema({
 
 export const OrderItemSchema = new Schema({
   product: { type: Schema.Types.ObjectId, ref: 'Product' },
-  brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+  // brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+  comboId: String,
   price: Number,
   cost: Number,
   saleTaxRate: Number,
@@ -68,16 +71,17 @@ export const OrderItemSchema = new Schema({
   subTotal: Number,
   saleTax: Number,
   additions: [OrderItemAdditionSchema],
+  type: String,
 })
 
-const OrderSchema = new Schema({
+export const OrderSchema = new Schema({
   items: [OrderItemSchema],
   note: String,
   subTotal: Number,
   saleTax: Number,
   total: Number,
   status: String,
-  brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+  // brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   qrcode: { type: Schema.Types.ObjectId, ref: 'Qrcode' },
   payment: { type: Schema.Types.ObjectId, ref: 'Payment' },

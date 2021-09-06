@@ -24,6 +24,8 @@ import { OrderRoute } from './order/order.route';
 import { TransactionRoute } from './transaction/transaction.route';
 import { UploaderRoute } from "./uploader/uploader.route";
 import { SpecRoute } from "./spec/spec.route";
+import { QuoteRoute } from "./quote/quote.route";
+
 import { AuthMiddleWare } from "./middlewares/auth-middleware";
 
 dotenv.config();
@@ -34,8 +36,8 @@ const app = express();
 const SVC_PATH = process.env.ENV === "local" ? cfg.SVC_PATH : "";
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false, limit: "1mb" }));
-app.use(bodyParser.json({ limit: "1mb" }));
+app.use(express.json());
+
 
 app.use(AuthMiddleWare);
 
@@ -53,6 +55,7 @@ app.use(SVC_PATH + "/orders", OrderRoute());
 app.use(SVC_PATH + "/transactions", TransactionRoute());
 app.use(SVC_PATH + "/uploads", UploaderRoute());
 app.use(SVC_PATH + "/specs", SpecRoute());
+app.use(SVC_PATH + "/quotes", QuoteRoute());
 
 app.listen(cfg.SVC_PORT, () => {
   console.log(`svc path: ${SVC_PATH}`);

@@ -12,6 +12,7 @@ const paths = [
     `${SVC_PATH}/auth`,
     `${SVC_PATH}/auth/login`,
     `${SVC_PATH}/auth/signup`,
+    `${SVC_PATH}/quote`,
 ];
 
 

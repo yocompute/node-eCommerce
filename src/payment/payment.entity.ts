@@ -4,12 +4,12 @@ import { IBrand } from '../brand/brand.entity';
 import { IProduct } from '../product/product.entity';
 import { IUser } from '../user/user.entity';
 import { IQrcode } from '../qrcode/qrcode.entity';
-import { OrderItemSchema, IOrderItem } from '../order/order.entity';
+import { OrderItemSchema, OrderSchema, IOrderItem, IOrder } from '../order/order.entity';
 
 const { Schema } = mongoose;
 
 export interface IPayment extends Document {
-  items: IOrderItem[],
+  orders: IOrder[],
   note: string,
   subTotal: number,
   saleTax: number,
@@ -21,10 +21,11 @@ export interface IPayment extends Document {
   updateUTC?: Date,
 }
 
+
 const PaymentSchema = new Schema({
-  items: [OrderItemSchema],
+  orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
   note: String,
-  sutTotal: Number,
+  subTotal: Number,
   saleTax: Number,
   total: Number,
   status: String,
